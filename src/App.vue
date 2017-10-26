@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <div class="hint" v-for="hint in hints" :style="{'left': hint + 'px'}"></div>
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
     <svg id="canv" width="400" height="400" @pointermove="onDrag" @pointerup="stopDrag" @pointerleave="stopDrag">
-      <rect class="item" :class="dragging" @pointerdown="startDrag" @pointerup="stopDrag" :x="c.x" :y="c.y" :width="c.w" :height="c.h"></rect>
+      <rect v-for="(item, index) in items" class="item" @pointerdown="startDrag($event, index)" @pointerup="stopDrag" :x="item.x" :y="item.y" :width="item.w" :height="item.h">
+      </rect>
     </svg>
   </div>
 </template>
@@ -14,66 +14,63 @@
     data() {
       return {
         dragging: "none",
-        start: {
+        selectedIndex: -1,
+        dragOffset: {
           x: 0,
           y: 0
         },
-        c: {
-          x: 0,
-          y: 0,
-          w: 100,
-          h: 30
-        },
-        hints: [
+        items: [
+          {
+            x: 0,
+            y: 0,
+            w: 100,
+            h: 30
+          },
+          {
+            x: 110,
+            y: 110,
+            w: 50,
+            h: 80
+          },
         ]
       }
     },
+    computed: {
+      selectedItem(){
+        return this.items[this.selectedIndex]
+      }
+    },
     methods: {
-      startDrag(e) {
+      startDrag(e, index) {
         //e = e.changedTouches ? e.changedTouches[0] : e
         this.dragging = "move"
+        this.selectedIndex = index
         //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
-        this.start.x = e.offsetX - this.c.x
-        this.start.y = e.pageY - this.c.y
+        this.dragOffset.x = e.offsetX - this.selectedItem.x
+        this.dragOffset.y = e.pageY - this.selectedItem.y
 
-        if(e.offsetX - this.c.x > this.c.w - 20){
+        if (e.offsetX - this.selectedItem.x > this.selectedItem.w - 20) {
           this.dragging = "resize"
         }
       },
-      over(e){
-        if (this.dragging === "none") {
-
-        }
-      },
-      leave(e){
-
-      },
       onDrag(e) {
         //e = e.changedTouches ? e.changedTouches[0] : e
-       if (this.dragging === "move") {
+        if (this.dragging === "move") {
           //差分値を基点に反映
-          this.c.x = Math.round((e.offsetX - this.start.x) / 8) * 8
-          this.c.y = Math.round((e.pageY - this.start.y) / 8) * 8
+          this.selectedItem.x = Math.round((e.offsetX - this.dragOffset.x) / 8) * 8
+          this.selectedItem.y = Math.round((e.pageY - this.dragOffset.y) / 8) * 8
         }
-        this.hints = [
-          this.c.x,
-          e.offsetX
-        /*
-          this.start.x,
-          this.start.x - document.getElementById("canv").getBoundingClientRect().left,
-          this.c.x
-          */
-        ]
         if (this.dragging === "resize") {
-          this.c.w = Math.round((e.offsetX - this.c.x) / 8) * 8
-          if(this.c.w < 8){
-            this.c.w = 8;
+          this.selectedItem.w = Math.round((e.offsetX - this.selectedItem.x) / 8) * 8
+          if (this.selectedItem.w < 8) {
+            this.selectedItem.w = 8;
           }
         }
       },
       stopDrag() {
         if (this.dragging !== "none") {
           this.dragging = "none"
+          this.selectedIndex = -1;
         }
       }
     }
@@ -96,26 +93,31 @@
     color: #2c3e50;
   }
 
-  .hint{
+  .hint {
     width: 1px;
     height: 100px;
     background: red;
     position: absolute;
     z-index: -100;
   }
-  .move{
+
+  .move {
     fill: gray;
   }
-  .hover{
+
+  .hover {
     fill: yellow;
   }
 
-  .resize-hover{
+  .resize-hover {
     fill: blue;
   }
-  
-  .item:hover{
-    opacity: 0.9;
+  .item{
+    fill: white;
+    stroke: black;
   }
 
-  </style>
+  .item:hover {
+    opacity: 0.5;
+  }
+</style>
