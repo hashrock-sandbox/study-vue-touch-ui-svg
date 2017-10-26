@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
-    <svg id="canv" width="400" height="400" @pointermove="onDrag" @pointerup="stopDrag" @pointerleave="stopDrag">
-      <rect v-for="(item, index) in items" class="item" @pointerdown="startDrag($event, index)" @pointerup="stopDrag" :x="item.x" :y="item.y" :width="item.w" :height="item.h">
+    <svg id="canv" width="400" height="400" @pointermove="onDrag" @pointerup="stopDrag">
+      <rect v-for="(item, index) in items" class="item" @pointerdown="startDrag($event, index)" :x="item.x" :y="item.y" :width="item.w" :height="item.h">
       </rect>
     </svg>
   </div>
@@ -42,23 +42,21 @@
     },
     methods: {
       startDrag(e, index) {
-        //e = e.changedTouches ? e.changedTouches[0] : e
         this.dragging = "move"
         this.selectedIndex = index
         //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
         this.dragOffset.x = e.offsetX - this.selectedItem.x
-        this.dragOffset.y = e.pageY - this.selectedItem.y
+        this.dragOffset.y = e.offsetY - this.selectedItem.y
 
         if (e.offsetX - this.selectedItem.x > this.selectedItem.w - 20) {
           this.dragging = "resize"
         }
       },
       onDrag(e) {
-        //e = e.changedTouches ? e.changedTouches[0] : e
         if (this.dragging === "move") {
           //差分値を基点に反映
           this.selectedItem.x = Math.round((e.offsetX - this.dragOffset.x) / 8) * 8
-          this.selectedItem.y = Math.round((e.pageY - this.dragOffset.y) / 8) * 8
+          this.selectedItem.y = Math.round((e.offsetY - this.dragOffset.y) / 8) * 8
         }
         if (this.dragging === "resize") {
           this.selectedItem.w = Math.round((e.offsetX - this.selectedItem.x) / 8) * 8
@@ -84,6 +82,7 @@
   }
 
   svg {
+    touch-action : none;
     background: white;
     /*opacity: 0.9;*/
   }
