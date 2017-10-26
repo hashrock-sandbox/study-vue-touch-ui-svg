@@ -49,7 +49,10 @@
         this.dragOffset.y = e.offsetY - this.selectedItem.y
 
         if (e.offsetX - this.selectedItem.x > this.selectedItem.w - 20) {
-          this.dragging = "resize"
+          this.dragging = "resize-x"
+        }
+        if (e.offsetY - this.selectedItem.y > this.selectedItem.h - 20) {
+          this.dragging = "resize-y"
         }
       },
       onDrag(e) {
@@ -58,12 +61,18 @@
           this.selectedItem.x = Math.round((e.offsetX - this.dragOffset.x) / 8) * 8
           this.selectedItem.y = Math.round((e.offsetY - this.dragOffset.y) / 8) * 8
         }
-        if (this.dragging === "resize") {
+        if (this.dragging === "resize-x") {
           this.selectedItem.w = Math.round((e.offsetX - this.selectedItem.x) / 8) * 8
           if (this.selectedItem.w < 8) {
             this.selectedItem.w = 8;
           }
         }
+        if (this.dragging === "resize-y") {
+          this.selectedItem.h = Math.round((e.offsetY - this.selectedItem.y) / 8) * 8
+          if (this.selectedItem.h < 8) {
+            this.selectedItem.h = 8;
+          }
+        }        
       },
       stopDrag() {
         if (this.dragging !== "none") {
