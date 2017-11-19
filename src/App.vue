@@ -25,7 +25,7 @@ export default Vue.extend({
       return this.$store.state.items[this.$store.state.selectedIndex];
     },
     styleObj(){
-      const selected: any = this.selectedItem
+      const selected: FusenItem = this.selectedItem
       if(this.selectedItem){
         return {
           top: selected.y + "px",
