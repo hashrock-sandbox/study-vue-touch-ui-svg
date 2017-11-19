@@ -102,6 +102,7 @@ export default Vue.extend({
 svg {
   touch-action: none;
   background: white;
+  position: absolute;
   /*opacity: 0.9;*/
 }
 
