@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
-    <svg id="canv" width="400" height="400" @pointermove="onDrag" @pointerup="stopDrag">
-      <rect v-for="(item, index) in items" class="item" @pointerdown="startDrag($event, index)" :x="item.x" :y="item.y" :width="item.w" :height="item.h">
+    <svg id="canv" width="800" height="800" @pointermove="onDrag" @pointerup="stopDrag">
+      <rect v-for="(item, index) in items" :key="index" class="item" @pointerdown="startDrag($event, index)" :x="item.x" :y="item.y" :width="item.w" :height="item.h">
       </rect>
     </svg>
   </div>
@@ -21,16 +21,16 @@
         },
         items: [
           {
-            x: 0,
-            y: 0,
-            w: 100,
-            h: 30
+            x: 10,
+            y: 10,
+            w: 200,
+            h: 100
           },
           {
-            x: 110,
-            y: 110,
-            w: 50,
-            h: 80
+            x: 210,
+            y: 210,
+            w: 300,
+            h: 150
           },
         ]
       }
