@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "private": true,
   "main": "src/main.js",
+  "scripts": {
+    "dev": "poi",
+    "build": "poi build"
+  },
   "devDependencies": {
     "poi": "^9.5.2"
   }
