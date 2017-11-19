@@ -8,6 +8,7 @@ export interface FusenItem {
   y: number;
   w: number;
   h: number;
+  text: string;
 }
 
 export default new Vuex.Store({
@@ -18,15 +19,18 @@ export default new Vuex.Store({
         x: 10,
         y: 10,
         w: 200,
-        h: 100
+        h: 100,
+        text: "Hello\nWorld"
       },
       {
         x: 210,
         y: 210,
         w: 300,
-        h: 150
+        h: 150,
+        text: "はろー"
       }
-    ]
+    ],
+    editing: false
   },
   mutations: {
     moveItem(state, payload) {
@@ -40,5 +44,12 @@ export default new Vuex.Store({
     selectItem(state, index) {
       state.selectedIndex = index
     },
+    openEditor(state) {
+      state.editing = true
+    },
+    editItem(state, text) {
+      state.items[state.selectedIndex].text = text
+    }
+
   }
 })

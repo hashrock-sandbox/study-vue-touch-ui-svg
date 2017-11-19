@@ -1,5 +1,10 @@
 <template>
   <svg id="canv" width="800" height="800" @pointermove="onDrag" @pointerup="stopDrag">
+    <filter id="drop-shadow" width="150%" height="150%">
+        <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="2" />
+        <feOffset result="offsetBlur" dx="2" dy="2" />
+        <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
+    </filter>
     <fusen-group v-for="(item, index) in items" :index="index" :key="index" :item="item" @selected="startDrag"></fusen-group>
   </svg>
 </template>
@@ -83,7 +88,7 @@ export default Vue.extend({
 <style>
 svg {
   touch-action: none;
-  background: white;
+  background: #FCC;
   position: absolute;
   /*opacity: 0.9;*/
 }
