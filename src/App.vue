@@ -25,12 +25,13 @@ export default Vue.extend({
       return this.$store.state.items[this.$store.state.selectedIndex];
     },
     styleObj(){
+      const selected: any = this.selectedItem
       if(this.selectedItem){
         return {
-          top: this.selectedItem + "px",
-          left: this.selectedItem + "px",
-          width: this.selectedItem + "px",
-          height: this.selectedItem + "px"
+          top: selected.y + "px",
+          left: selected.x + "px",
+          width: selected.w + "px",
+          height: selected.h + "px"
         }
       }
       return {}
