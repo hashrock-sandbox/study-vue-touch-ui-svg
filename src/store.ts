@@ -14,6 +14,7 @@ export interface FusenItem {
 export default new Vuex.Store({
   state: {
     selectedIndex: -1,
+    editingText: "",
     items: <FusenItem[]>[
       {
         x: 10,
@@ -44,11 +45,18 @@ export default new Vuex.Store({
     selectItem(state, index) {
       state.selectedIndex = index
     },
-    openEditor(state) {
+    openEditor(state, index) {
       state.editing = true
+      state.selectedIndex = index
+      state.editingText = state.items[index].text
     },
     editItem(state, text) {
       state.items[state.selectedIndex].text = text
+      state.editingText = ""
+      state.editing = false
+    },
+    updateEditor(state, value){
+      state.editingText = value
     }
 
   }

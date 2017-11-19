@@ -1,6 +1,6 @@
 <template>
   <g :transform="toPosition">
-    <rect class="item" @pointerdown="startDrag($event)" :width="item.w" :height="item.h" filter="url(#drop-shadow)" >
+    <rect class="item" @pointerdown="startDrag($event)" @dblclick="openEditor" :width="item.w" :height="item.h" filter="url(#drop-shadow)" >
     </rect>
     <foreignObject width="300" height="300" x="0" y="0">
       <div class="innerText" v-text="item.text"></div>
@@ -18,6 +18,9 @@ export default Vue.extend({
   methods: {
     startDrag(event: DragEvent) {
       this.$emit("selected", [event, this.index]);
+    },
+    openEditor(){
+      this.$emit("open", this.index);
     }
   },
   computed: {

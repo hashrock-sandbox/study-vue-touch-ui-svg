@@ -5,7 +5,7 @@
         <feOffset result="offsetBlur" dx="2" dy="2" />
         <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
     </filter>
-    <fusen-group v-for="(item, index) in items" :index="index" :key="index" :item="item" @selected="startDrag"></fusen-group>
+    <fusen-group v-for="(item, index) in items" :index="index" :key="index" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
   </svg>
 </template>
 
@@ -77,6 +77,9 @@ export default Vue.extend({
         this.dragging = "none";
         this.$store.commit("selectItem", -1);
       }
+    },
+    openEditor(index: number){
+      this.$store.commit("openEditor", index)
     }
   },
   components: {

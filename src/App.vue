@@ -3,9 +3,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-reboot.css">
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
     <fusen-canvas></fusen-canvas>
-    <div class="editor" v-show="editing">
-      <div class="editor__frame">
-        <textarea class="editor__textarea">Hello!</textarea>
+    <div class="editor" v-if="editing">
+      <div class="editor__frame" :style="styleObj">
+        <textarea class="editor__textarea" v-model="editingText" @blur="editItem" autofocus></textarea>
       </div>
     </div>
   </div>
@@ -14,15 +14,54 @@
 <script lang="ts">
 import Vue from "vue";
 import FusenCanvas from "./FusenCanvas.vue"
+import { FusenItem } from "./store";
 
 export default Vue.extend({
-  data(){
-    return {
-      editing: false
+  computed: {
+    editing(): boolean{
+      return this.$store.state.editing
+    },
+    selectedItem(): FusenItem {
+      return this.$store.state.items[this.$store.state.selectedIndex];
+    },
+    styleObj(){
+      const selected: any = this.selectedItem
+      if(this.selectedItem){
+        return {
+          top: selected.y + "px",
+          left: selected.x + "px",
+          width: selected.w + "px",
+          height: selected.h + "px"
+        }
+      }
+      return {}
+    },
+    editingText: {
+      get (): string {
+        return this.$store.state.editingText
+      },
+      set (value: string) {
+        this.$store.commit('updateEditor', value)
+      }
+    }
+  },
+  methods: {
+    editItem(){
+      this.$store.commit("editItem", this.editingText)
     }
   },
   components: {
     FusenCanvas
+  },
+  watch:{
+    editing(value){
+      if(value){
+        Vue.nextTick(()=>{
+          const el = <HTMLTextAreaElement>(this.$el.querySelector(".editor__textarea"))
+          el.focus()
+        })
+      }
+    }
   }
 })
 </script>
@@ -59,6 +98,8 @@ body {
 .editor__textarea{
   flex: 1;
   height: 100%;
+  padding: 0.5rem;
+  border: 1px solid blue;
 }
 
 </style>
