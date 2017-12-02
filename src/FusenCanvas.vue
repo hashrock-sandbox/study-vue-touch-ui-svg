@@ -83,17 +83,17 @@ export default Vue.extend({
           h: this.selectedItem.h
         }
         if (this.resizeType[0] === "left") {
-          move.x = Math.round((e.offsetX) / 8) * 8
+          move.x = gridRound(e.offsetX)
           move.w = move.w - move.x + this.selectedItem.x
         }
         if (this.resizeType[0] === "right") {
-          move.w = Math.round((e.offsetX - this.selectedItem.x) / 8) * 8
+          move.w = gridRound(e.offsetX - this.selectedItem.x)
         }
         if (this.resizeType[1] === "bottom") {
-          move.h = Math.round((e.offsetY - this.selectedItem.y) / 8) * 8
+          move.h = gridRound(e.offsetY - this.selectedItem.y)
         }
         if (this.resizeType[1] === "top") {
-          move.y = Math.round((e.offsetY) / 8) * 8
+          move.y = gridRound(e.offsetY)
           move.h = move.h - move.y + this.selectedItem.y
         }
         this.$store.commit("resizeItem", move);
@@ -102,8 +102,8 @@ export default Vue.extend({
       if (this.dragging === "move") {
         //差分値を基点に反映
         this.$store.commit("moveItem", {
-          x: Math.round((e.offsetX - this.dragOffset.x) / 8) * 8,
-          y: Math.round((e.offsetY - this.dragOffset.y) / 8) * 8
+          x: gridRound(e.offsetX - this.dragOffset.x),
+          y: gridRound(e.offsetY - this.dragOffset.y)
         });
       }
       if(this.dragging === "resize"){
@@ -124,6 +124,10 @@ export default Vue.extend({
     FusenGroup
   }
 });
+
+function gridRound(value: number){
+  return Math.round(value / 8) * 8
+}
 </script>
 
 <style>
