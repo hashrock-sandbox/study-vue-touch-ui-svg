@@ -10,6 +10,7 @@
       <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
       <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
     </g>
+    <path class="connector" :d="connectorPath"></path>
   </svg>
 </template>
 
@@ -58,6 +59,22 @@ export default Vue.extend({
         {type: ["center", "bottom"], x: item.w / 2, y: item.h, size: size},
         {type: ["right", "bottom"], x: item.w, y: item.h, size: size},
       ]
+    },
+    connectorPath(){
+      const items: FusenItem[] = this.items
+      const start = {
+        x: items[0].x + items[0].w,
+        y: items[0].y + items[0].h / 2,
+      }
+      const end = {
+        x: items[1].x,
+        y: items[1].y + items[1].h / 2,
+      }
+      const handleLength = 50
+      if(items.length > 0){
+        return `M${start.x},${start.y} C${start.x + handleLength},${start.y} ${end.x - handleLength},${end.y} ${end.x},${end.y}`
+      }
+      return ""
     }
   },
   methods: {
@@ -170,6 +187,12 @@ svg {
 .selection{
   fill: none;
   stroke: green;
+}
+
+.connector{
+  fill: none;
+  stroke: black;
+  stroke-width: 3px;
 }
 
 </style>
