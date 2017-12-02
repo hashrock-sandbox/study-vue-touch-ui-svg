@@ -39,6 +39,8 @@ export default new Vuex.Store({
       state.items[state.selectedIndex].y = payload.y
     },
     resizeItem(state, payload) {
+      state.items[state.selectedIndex].x = payload.x
+      state.items[state.selectedIndex].y = payload.y
       state.items[state.selectedIndex].w = payload.w
       state.items[state.selectedIndex].h = payload.h
     },
