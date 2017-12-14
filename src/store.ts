@@ -9,6 +9,7 @@ export interface FusenItem {
   w: number;
   h: number;
   text: string;
+  id: number;
 }
 
 export default new Vuex.Store({
@@ -21,16 +22,39 @@ export default new Vuex.Store({
         y: 10,
         w: 200,
         h: 100,
-        text: "Hello\nWorld"
+        text: "Hello\nWorld",
+        id: 0
       },
       {
         x: 210,
         y: 210,
         w: 300,
         h: 150,
-        text: "はろー"
+        text: "はろー",
+        id: 1
+      },
+      {
+        x: 310,
+        y: 310,
+        w: 200,
+        h: 200,
+        text: "TestTest",
+        id: 2
       }
+
     ],
+    connectors: [{
+      id: 0,
+      from: 0,
+      to: 1,
+      arrowType: ["none", "none"]
+    },
+    {
+      id: 1,
+      from: 1,
+      to: 2,
+      arrowType: ["none", "none"]
+    }],
     editing: false
   },
   mutations: {

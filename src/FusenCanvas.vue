@@ -5,12 +5,16 @@
         <feOffset result="offsetBlur" dx="2" dy="2" />
         <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
     </filter>
-    <fusen-group v-for="(item, index) in items" :index="index" :key="index" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
+    <path v-for="connector in connectors" class="connector" :d="connectorPath(connector)"></path>
+    <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
     <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
       <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
       <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
+      <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="-20" r="5"></circle>
+      <circle class="arrow-handle" :cx="-20" :cy="selectedItem.h / 2" r="5"></circle>
+      <circle class="arrow-handle" :cx="selectedItem.w + 20" :cy="selectedItem.h / 2" r="5"></circle>
+      <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="selectedItem.h + 20" r="5"></circle>
     </g>
-    <path class="connector" :d="connectorPath"></path>
   </svg>
 </template>
 
@@ -38,6 +42,9 @@ export default Vue.extend({
     items(): FusenItem[] {
       return this.$store.state.items;
     },
+    connectors(): any[]{
+      return this.$store.state.connectors
+    },
     handles(){
       const item: FusenItem = this.selectedItem
       if(!item){
@@ -59,25 +66,33 @@ export default Vue.extend({
         {type: ["center", "bottom"], x: item.w / 2, y: item.h, size: size},
         {type: ["right", "bottom"], x: item.w, y: item.h, size: size},
       ]
-    },
-    connectorPath(){
+    }
+  },
+  methods: {
+    connectorPath(connector: any){
       const items: FusenItem[] = this.items
+
+      const fromItem = items.filter((item)=>{
+        return connector.from === item.id
+      })[0]
+      const toItem = items.filter((item)=>{
+        return connector.to === item.id
+      })[0]
+
       const start = {
-        x: items[0].x + items[0].w,
-        y: items[0].y + items[0].h / 2,
+        x: fromItem.x + fromItem.w,
+        y: fromItem.y + fromItem.h / 2,
       }
       const end = {
-        x: items[1].x,
-        y: items[1].y + items[1].h / 2,
+        x: toItem.x,
+        y: toItem.y + toItem.h / 2,
       }
       const handleLength = 50
       if(items.length > 0){
         return `M${start.x},${start.y} C${start.x + handleLength},${start.y} ${end.x - handleLength},${end.y} ${end.x},${end.y}`
       }
       return ""
-    }
-  },
-  methods: {
+    },    
     resizePoint(type: string[]) {
         this.dragging = "resize";
         this.resizeType = type;
@@ -193,6 +208,11 @@ svg {
   fill: none;
   stroke: black;
   stroke-width: 3px;
+}
+
+.arrow-handle{
+  fill: white;
+  stroke: rgba(0,0,0,0.5)
 }
 
 </style>
