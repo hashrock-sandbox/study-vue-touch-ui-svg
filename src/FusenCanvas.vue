@@ -7,7 +7,16 @@
     </filter>
     <path v-for="connector in connectors" :key="connector.id" class="connector" :d="connectorPath(connector)"></path>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
-    <fusen-selection :selected-item="selectedItem" @resize="resizePoint"></fusen-selection>
+    <fusen-selection :selected-item="selectedItem" @resize="resizePoint" @arrow="createArrow"></fusen-selection>
+    <path v-if="arrowPreview" class="connector connector--preview" :d="connectorPath(arrowPreview)"></path>
+    <g v-if="arrowPreview">
+      <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="item.id" :transform="transformStr(item)">
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'top')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'top')" :cx="item.w / 2" :cy="-20" r="10"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'left')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'left')" :cx="-20" :cy="item.h / 2" r="10"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'right')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'right')" :cx="item.w + 20" :cy="item.h / 2" r="10"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'bottom')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'bottom')" :cx="item.w / 2" :cy="item.h + 20" r="10"></circle>
+      </g>
+    </g>
   </svg>
 </template>
 
@@ -60,10 +69,14 @@ export default Vue.extend({
       dragOffset: {
         x: 0,
         y: 0
-      }
+      },
+      arrowPreview: null as null | Connector
     };
   },
   computed: {
+    selectedIndex(): number {
+      return this.$store.state.selectedIndex;
+    },
     selectedItem(): FusenItem {
       return this.$store.state.items[this.$store.state.selectedIndex];
     },
@@ -75,6 +88,38 @@ export default Vue.extend({
     }
   },
   methods: {
+    makeArrow(id: number, type: string) {
+      if (this.arrowPreview) {
+        this.arrowPreview.to = id;
+        this.arrowPreview.toPosition = type;
+        this.$store.commit("createArrow", this.arrowPreview);
+      }
+    },
+    removeArrow(ev: PointerEvent) {
+      if (this.arrowPreview) {
+        this.arrowPreview.to = -1;
+      }
+    },
+    addArrow(id: number, type: string) {
+      if (this.arrowPreview) {
+        this.arrowPreview.to = id;
+        this.arrowPreview.toPosition = type;
+      }
+    },
+    transformStr(item: FusenItem) {
+      return `translate(${item.x},${item.y})`;
+    },
+    createArrow(payload: any) {
+      this.arrowPreview = {
+        id: -1,
+        from: this.selectedItem.id,
+        fromPosition: payload.type,
+        to: -1,
+        toPoint: [payload.event.clientX, payload.event.clientY],
+        toPosition: "none",
+        arrowType: ["none", "none"]
+      };
+    },
     connectorPath(connector: Connector) {
       const items: FusenItem[] = this.items;
 
@@ -101,6 +146,13 @@ export default Vue.extend({
         connector.fromPosition,
         50
       );
+
+      if (!toItem) {
+        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${connector
+          .toPoint[0]},${connector.toPoint[1]} ${connector
+          .toPoint[0]},${connector.toPoint[1]}`;
+      }
+
       const endHandle = getConnectPosition(
         toItem.x,
         toItem.y,
@@ -170,11 +222,18 @@ export default Vue.extend({
       if (this.dragging === "resize") {
         this.onResize(e);
       }
+      if (this.arrowPreview) {
+        Vue.set(this.arrowPreview.toPoint, 0, e.offsetX);
+        Vue.set(this.arrowPreview.toPoint, 1, e.offsetY);
+      }
     },
     stopDrag() {
       if (this.dragging !== "none") {
         this.dragging = "none";
         //this.$store.commit("selectItem", -1);
+      }
+      if (this.arrowPreview) {
+        this.arrowPreview = null;
       }
     },
     openEditor(index: number) {
@@ -217,5 +276,12 @@ svg {
   fill: none;
   stroke: black;
   stroke-width: 3px;
+}
+.connector--preview {
+  stroke: green;
+}
+
+.arrow-attach {
+  fill: rgba(255, 255, 255, 0.5);
 }
 </style>

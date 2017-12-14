@@ -2,10 +2,10 @@
   <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
     <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
-    <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="-20" r="5"></circle>
-    <circle class="arrow-handle" :cx="-20" :cy="selectedItem.h / 2" r="5"></circle>
-    <circle class="arrow-handle" :cx="selectedItem.w + 20" :cy="selectedItem.h / 2" r="5"></circle>
-    <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="selectedItem.h + 20" r="5"></circle>
+    <circle class="arrow-handle" @pointerdown="createArrow($event, 'top')" :cx="selectedItem.w / 2" :cy="-20" r="5"></circle>
+    <circle class="arrow-handle" @pointerdown="createArrow($event, 'left')" :cx="-20" :cy="selectedItem.h / 2" r="5"></circle>
+    <circle class="arrow-handle" @pointerdown="createArrow($event, 'right')" :cx="selectedItem.w + 20" :cy="selectedItem.h / 2" r="5"></circle>
+    <circle class="arrow-handle" @pointerdown="createArrow($event, 'bottom')" :cx="selectedItem.w / 2" :cy="selectedItem.h + 20" r="5"></circle>
   </g>
 </template>
 
@@ -44,6 +44,9 @@ export default Vue.extend({
   methods: {
     resizePoint(type: string[]) {
       this.$emit("resize", type);
+    },
+    createArrow(event: PointerEvent, type: string) {
+      this.$emit("arrow", { type: type, event: event });
     }
   }
 });

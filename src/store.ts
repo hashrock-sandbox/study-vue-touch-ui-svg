@@ -20,6 +20,7 @@ export interface Connector {
   fromPosition: string;
   to: number;
   toPosition: string;
+  toPoint: number[]
   //変更する？
   arrowType: string[];
 }
@@ -55,22 +56,7 @@ export default new Vuex.Store({
       }
 
     ] as FusenItem[],
-    connectors: [{
-      id: 0,
-      from: 0,
-      fromPosition: "top",
-      to: 1,
-      toPosition: "bottom",
-      arrowType: ["none", "none"]
-    },
-    {
-      id: 1,
-      from: 1,
-      fromPosition: "left",
-      to: 2,
-      toPosition: "right",
-      arrowType: ["none", "none"]
-    }] as Connector[],
+    connectors: [] as Connector[],
     editing: false
   },
   mutations: {
@@ -97,8 +83,12 @@ export default new Vuex.Store({
       state.editingText = ""
       state.editing = false
     },
-    updateEditor(state, value){
+    updateEditor(state, value) {
       state.editingText = value
+    },
+    createArrow(state, payload) {
+      payload.id = state.connectors.length
+      state.connectors.push(payload)
     }
 
   }
