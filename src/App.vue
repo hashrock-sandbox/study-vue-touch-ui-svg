@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-reboot.css">
+    <link rel="stylesheet" href="./bootstrap-reboot.css">
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
     <fusen-canvas></fusen-canvas>
     <div class="editor" v-if="editing">
