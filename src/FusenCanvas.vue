@@ -24,6 +24,34 @@ import FusenGroup from "./FusenGroup.vue";
 import { FusenItem } from "./store";
 import { mapMutations } from "vuex";
 
+function getConnectPosition(x:number, y:number, w:number, h:number, position:string, offset:number){
+  let px = x;
+  let py = y;
+
+  if(position === "left"){
+    px -= offset
+    py = y + h / 2
+  }
+  if(position === "top"){
+    px = x + w / 2
+    py-=offset
+  }
+  if(position === "right"){
+    px= x+w+offset
+    py = y + h / 2
+  }
+  if(position === "bottom"){
+    px= x+w/2
+    py = y + h+offset
+  }
+
+  return {
+    x:px,
+    y:py
+  }
+}
+
+
 export default Vue.extend({
   data() {
     return {
@@ -79,17 +107,12 @@ export default Vue.extend({
         return connector.to === item.id
       })[0]
 
-      const start = {
-        x: fromItem.x + fromItem.w,
-        y: fromItem.y + fromItem.h / 2,
-      }
-      const end = {
-        x: toItem.x,
-        y: toItem.y + toItem.h / 2,
-      }
-      const handleLength = 50
+      const start = getConnectPosition(fromItem.x,fromItem.y, fromItem.w, fromItem.h, connector.fromPosition, 0)
+      const startHandle = getConnectPosition(fromItem.x,fromItem.y, fromItem.w, fromItem.h, connector.fromPosition, 50)
+      const endHandle = getConnectPosition(toItem.x,toItem.y, toItem.w, toItem.h, connector.toPosition, 50)
+      const end = getConnectPosition(toItem.x,toItem.y, toItem.w, toItem.h, connector.toPosition, 0)
       if(items.length > 0){
-        return `M${start.x},${start.y} C${start.x + handleLength},${start.y} ${end.x - handleLength},${end.y} ${end.x},${end.y}`
+        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`
       }
       return ""
     },    

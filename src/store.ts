@@ -10,6 +10,8 @@ export interface FusenItem {
   h: number;
   text: string;
   id: number;
+  fromPosition: string;
+  toPosition: string;
 }
 
 export default new Vuex.Store({
@@ -46,13 +48,17 @@ export default new Vuex.Store({
     connectors: [{
       id: 0,
       from: 0,
+      fromPosition: "top",
       to: 1,
+      toPosition: "bottom",
       arrowType: ["none", "none"]
     },
     {
       id: 1,
       from: 1,
+      fromPosition: "left",
       to: 2,
+      toPosition: "right",
       arrowType: ["none", "none"]
     }],
     editing: false
