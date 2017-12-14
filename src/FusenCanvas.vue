@@ -7,50 +7,50 @@
     </filter>
     <path v-for="connector in connectors" :key="connector.id" class="connector" :d="connectorPath(connector)"></path>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
-    <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
-      <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
-      <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
-      <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="-20" r="5"></circle>
-      <circle class="arrow-handle" :cx="-20" :cy="selectedItem.h / 2" r="5"></circle>
-      <circle class="arrow-handle" :cx="selectedItem.w + 20" :cy="selectedItem.h / 2" r="5"></circle>
-      <circle class="arrow-handle" :cx="selectedItem.w / 2" :cy="selectedItem.h + 20" r="5"></circle>
-    </g>
+    <fusen-selection :selected-item="selectedItem" @resize="resizePoint"></fusen-selection>
   </svg>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
+import FusenSelection from "./FusenSelection.vue";
 import { FusenItem, Connector } from "./store";
 import { mapMutations } from "vuex";
 
-function getConnectPosition(x:number, y:number, w:number, h:number, position:string, offset:number){
+function getConnectPosition(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  position: string,
+  offset: number
+) {
   let px = x;
   let py = y;
 
-  if(position === "left"){
-    px -= offset
-    py = y + h / 2
+  if (position === "left") {
+    px -= offset;
+    py = y + h / 2;
   }
-  if(position === "top"){
-    px = x + w / 2
-    py-=offset
+  if (position === "top") {
+    px = x + w / 2;
+    py -= offset;
   }
-  if(position === "right"){
-    px= x+w+offset
-    py = y + h / 2
+  if (position === "right") {
+    px = x + w + offset;
+    py = y + h / 2;
   }
-  if(position === "bottom"){
-    px= x+w/2
-    py = y + h+offset
+  if (position === "bottom") {
+    px = x + w / 2;
+    py = y + h + offset;
   }
 
   return {
-    x:px,
-    y:py
-  }
+    x: px,
+    y: py
+  };
 }
-
 
 export default Vue.extend({
   data() {
@@ -60,7 +60,7 @@ export default Vue.extend({
       dragOffset: {
         x: 0,
         y: 0
-      },
+      }
     };
   },
   computed: {
@@ -70,55 +70,61 @@ export default Vue.extend({
     items(): FusenItem[] {
       return this.$store.state.items;
     },
-    connectors(): Connector[]{
-      return this.$store.state.connectors
-    },
-    handles(){
-      const item: FusenItem = this.selectedItem
-      if(!item){
-        return []
-      }
-      const size = 10
-      /*
-        lt ct rt
-        lc    rc
-        lb cb rb
-      */
-      return [
-        {type: ["left", "top"], x: 0, y: 0, size: size},
-        {type: ["center", "top"], x: item.w / 2, y: 0, size: size},
-        {type: ["right", "top"], x: item.w, y: 0, size: size},
-        {type: ["left", "center"], x: 0, y: item.h / 2, size: size},
-        {type: ["right", "center"], x: item.w, y: item.h / 2, size: size},
-        {type: ["left", "bottom"], x: 0, y: item.h, size: size},
-        {type: ["center", "bottom"], x: item.w / 2, y: item.h, size: size},
-        {type: ["right", "bottom"], x: item.w, y: item.h, size: size},
-      ]
+    connectors(): Connector[] {
+      return this.$store.state.connectors;
     }
   },
   methods: {
-    connectorPath(connector: Connector){
-      const items: FusenItem[] = this.items
+    connectorPath(connector: Connector) {
+      const items: FusenItem[] = this.items;
 
-      const fromItem = items.filter((item)=>{
-        return connector.from === item.id
-      })[0]
-      const toItem = items.filter((item)=>{
-        return connector.to === item.id
-      })[0]
+      const fromItem = items.filter(item => {
+        return connector.from === item.id;
+      })[0];
+      const toItem = items.filter(item => {
+        return connector.to === item.id;
+      })[0];
 
-      const start = getConnectPosition(fromItem.x,fromItem.y, fromItem.w, fromItem.h, connector.fromPosition, 0)
-      const startHandle = getConnectPosition(fromItem.x,fromItem.y, fromItem.w, fromItem.h, connector.fromPosition, 50)
-      const endHandle = getConnectPosition(toItem.x,toItem.y, toItem.w, toItem.h, connector.toPosition, 50)
-      const end = getConnectPosition(toItem.x,toItem.y, toItem.w, toItem.h, connector.toPosition, 0)
-      if(items.length > 0){
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`
+      const start = getConnectPosition(
+        fromItem.x,
+        fromItem.y,
+        fromItem.w,
+        fromItem.h,
+        connector.fromPosition,
+        0
+      );
+      const startHandle = getConnectPosition(
+        fromItem.x,
+        fromItem.y,
+        fromItem.w,
+        fromItem.h,
+        connector.fromPosition,
+        50
+      );
+      const endHandle = getConnectPosition(
+        toItem.x,
+        toItem.y,
+        toItem.w,
+        toItem.h,
+        connector.toPosition,
+        50
+      );
+      const end = getConnectPosition(
+        toItem.x,
+        toItem.y,
+        toItem.w,
+        toItem.h,
+        connector.toPosition,
+        0
+      );
+      if (items.length > 0) {
+        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
       }
-      return ""
-    },    
+      return "";
+    },
     resizePoint(type: string[]) {
-        this.dragging = "resize";
-        this.resizeType = type;
+      this.dragging = "resize";
+      this.resizeType = type;
     },
     startDrag(ev: any[]) {
       const e: DragEvent = ev[0];
@@ -130,28 +136,28 @@ export default Vue.extend({
       this.dragOffset.x = e.offsetX - this.selectedItem.x;
       this.dragOffset.y = e.offsetY - this.selectedItem.y;
     },
-    onResize(e: DragEvent){
-        let move = {
-          x: this.selectedItem.x,
-          y: this.selectedItem.y,
-          w: this.selectedItem.w,
-          h: this.selectedItem.h
-        }
-        if (this.resizeType[0] === "left") {
-          move.x = gridRound(e.offsetX)
-          move.w = move.w - move.x + this.selectedItem.x
-        }
-        if (this.resizeType[0] === "right") {
-          move.w = gridRound(e.offsetX - this.selectedItem.x)
-        }
-        if (this.resizeType[1] === "bottom") {
-          move.h = gridRound(e.offsetY - this.selectedItem.y)
-        }
-        if (this.resizeType[1] === "top") {
-          move.y = gridRound(e.offsetY)
-          move.h = move.h - move.y + this.selectedItem.y
-        }
-        this.$store.commit("resizeItem", move);
+    onResize(e: DragEvent) {
+      let move = {
+        x: this.selectedItem.x,
+        y: this.selectedItem.y,
+        w: this.selectedItem.w,
+        h: this.selectedItem.h
+      };
+      if (this.resizeType[0] === "left") {
+        move.x = gridRound(e.offsetX);
+        move.w = move.w - move.x + this.selectedItem.x;
+      }
+      if (this.resizeType[0] === "right") {
+        move.w = gridRound(e.offsetX - this.selectedItem.x);
+      }
+      if (this.resizeType[1] === "bottom") {
+        move.h = gridRound(e.offsetY - this.selectedItem.y);
+      }
+      if (this.resizeType[1] === "top") {
+        move.y = gridRound(e.offsetY);
+        move.h = move.h - move.y + this.selectedItem.y;
+      }
+      this.$store.commit("resizeItem", move);
     },
     onDrag(e: DragEvent) {
       if (this.dragging === "move") {
@@ -161,8 +167,8 @@ export default Vue.extend({
           y: gridRound(e.offsetY - this.dragOffset.y)
         });
       }
-      if(this.dragging === "resize"){
-        this.onResize(e)
+      if (this.dragging === "resize") {
+        this.onResize(e);
       }
     },
     stopDrag() {
@@ -171,24 +177,25 @@ export default Vue.extend({
         //this.$store.commit("selectItem", -1);
       }
     },
-    openEditor(index: number){
-      this.$store.commit("openEditor", index)
+    openEditor(index: number) {
+      this.$store.commit("openEditor", index);
     }
   },
   components: {
-    FusenGroup
+    FusenGroup,
+    FusenSelection
   }
 });
 
-function gridRound(value: number){
-  return Math.round(value / 8) * 8
+function gridRound(value: number) {
+  return Math.round(value / 8) * 8;
 }
 </script>
 
 <style>
 svg {
   touch-action: none;
-  background: #FCC;
+  background: #fcc;
   position: absolute;
   /*opacity: 0.9;*/
 }
@@ -201,41 +208,14 @@ svg {
   z-index: -100;
 }
 
-.move {
-  fill: gray;
-}
-
-.hover {
-  fill: yellow;
-}
-
-.resize-hover {
-  fill: blue;
-}
 .item {
   fill: white;
   stroke: black;
 }
 
-.handle{
-  fill: white;
-  stroke: green;
-}
-
-.selection{
-  fill: none;
-  stroke: green;
-}
-
-.connector{
+.connector {
   fill: none;
   stroke: black;
   stroke-width: 3px;
 }
-
-.arrow-handle{
-  fill: white;
-  stroke: rgba(0,0,0,0.5)
-}
-
 </style>

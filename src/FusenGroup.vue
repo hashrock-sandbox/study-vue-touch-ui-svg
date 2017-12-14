@@ -19,7 +19,7 @@ export default Vue.extend({
     startDrag(event: DragEvent) {
       this.$emit("selected", [event, this.index]);
     },
-    openEditor(){
+    openEditor() {
       this.$emit("open", this.index);
     }
   },
@@ -32,11 +32,10 @@ export default Vue.extend({
 </script>
 
 <style>
-.innerText{
+.innerText {
   padding: 0.5rem;
   white-space: pre-wrap;
   user-select: none;
   pointer-events: none;
 }
-
 </style>
