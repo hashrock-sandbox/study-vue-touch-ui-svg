@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
-import { FusenItem } from "./store";
+import { FusenItem, Connector } from "./store";
 import { mapMutations } from "vuex";
 
 function getConnectPosition(x:number, y:number, w:number, h:number, position:string, offset:number){
@@ -70,7 +70,7 @@ export default Vue.extend({
     items(): FusenItem[] {
       return this.$store.state.items;
     },
-    connectors(): any[]{
+    connectors(): Connector[]{
       return this.$store.state.connectors
     },
     handles(){
@@ -97,7 +97,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    connectorPath(connector: any){
+    connectorPath(connector: Connector){
       const items: FusenItem[] = this.items
 
       const fromItem = items.filter((item)=>{

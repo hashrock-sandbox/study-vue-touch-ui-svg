@@ -14,11 +14,21 @@ export interface FusenItem {
   toPosition: string;
 }
 
+export interface Connector {
+  id: number;
+  from: number;
+  fromPosition: string;
+  to: number;
+  toPosition: string;
+  //変更する？
+  arrowType: string[];
+}
+
 export default new Vuex.Store({
   state: {
     selectedIndex: -1,
     editingText: "",
-    items: <FusenItem[]>[
+    items: [
       {
         x: 10,
         y: 10,
@@ -44,7 +54,7 @@ export default new Vuex.Store({
         id: 2
       }
 
-    ],
+    ] as FusenItem[],
     connectors: [{
       id: 0,
       from: 0,
@@ -60,7 +70,7 @@ export default new Vuex.Store({
       to: 2,
       toPosition: "right",
       arrowType: ["none", "none"]
-    }],
+    }] as Connector[],
     editing: false
   },
   mutations: {
