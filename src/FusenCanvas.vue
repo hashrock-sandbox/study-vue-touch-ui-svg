@@ -138,7 +138,9 @@ export default Vue.extend({
         connector.fromPosition,
         0
       );
-      const startHandle = getConnectPosition(
+
+
+      let startHandle = getConnectPosition(
         fromItem.x,
         fromItem.y,
         fromItem.w,
@@ -153,14 +155,6 @@ export default Vue.extend({
           .toPoint[0]},${connector.toPoint[1]}`;
       }
 
-      const endHandle = getConnectPosition(
-        toItem.x,
-        toItem.y,
-        toItem.w,
-        toItem.h,
-        connector.toPosition,
-        50
-      );
       const end = getConnectPosition(
         toItem.x,
         toItem.y,
@@ -169,6 +163,32 @@ export default Vue.extend({
         connector.toPosition,
         0
       );
+
+
+      let distance = Math.pow(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2), 0.5)
+      if(distance > 200){
+        distance = 200
+      }
+
+      startHandle = getConnectPosition(
+        fromItem.x,
+        fromItem.y,
+        fromItem.w,
+        fromItem.h,
+        connector.fromPosition,
+        distance / 2
+      );
+
+      
+      const endHandle = getConnectPosition(
+        toItem.x,
+        toItem.y,
+        toItem.w,
+        toItem.h,
+        connector.toPosition,
+        distance / 2
+      );
+
 
       let deg = 0
       if(connector.toPosition === "top"){
