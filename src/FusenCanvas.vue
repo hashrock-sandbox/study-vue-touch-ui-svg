@@ -169,8 +169,29 @@ export default Vue.extend({
         connector.toPosition,
         0
       );
+
+      let deg = 0
+      if(connector.toPosition === "top"){
+        deg = 90 * 3
+      }
+      if(connector.toPosition === "left"){
+        deg = 90 * 2
+      }
+      if(connector.toPosition === "bottom"){
+        deg = 90 * 1
+      }
+      const pl = {
+        x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
+        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16,
+      }
+      const pr = {
+        x: end.x + Math.cos((deg - 45) * Math.PI / 180) * 16,
+        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16,
+      }
+
+      
       if (items.length > 0) {
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
+        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`;
       }
       return "";
     },
