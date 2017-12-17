@@ -139,7 +139,6 @@ export default Vue.extend({
         0
       );
 
-
       let startHandle = getConnectPosition(
         fromItem.x,
         fromItem.y,
@@ -164,10 +163,12 @@ export default Vue.extend({
         0
       );
 
-
-      let distance = Math.pow(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2), 0.5)
-      if(distance > 200){
-        distance = 200
+      let distance = Math.pow(
+        Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2),
+        0.5
+      );
+      if (distance > 200) {
+        distance = 200;
       }
 
       startHandle = getConnectPosition(
@@ -179,7 +180,6 @@ export default Vue.extend({
         distance / 2
       );
 
-      
       const endHandle = getConnectPosition(
         toItem.x,
         toItem.y,
@@ -189,27 +189,25 @@ export default Vue.extend({
         distance / 2
       );
 
-
-      let deg = 0
-      if(connector.toPosition === "top"){
-        deg = 90 * 3
+      let deg = 0;
+      if (connector.toPosition === "top") {
+        deg = 90 * 3;
       }
-      if(connector.toPosition === "left"){
-        deg = 90 * 2
+      if (connector.toPosition === "left") {
+        deg = 90 * 2;
       }
-      if(connector.toPosition === "bottom"){
-        deg = 90 * 1
+      if (connector.toPosition === "bottom") {
+        deg = 90 * 1;
       }
       const pl = {
         x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16,
-      }
+        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16
+      };
       const pr = {
         x: end.x + Math.cos((deg - 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16,
-      }
+        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16
+      };
 
-      
       if (items.length > 0) {
         return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`;
       }
