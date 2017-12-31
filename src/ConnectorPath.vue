@@ -52,16 +52,31 @@ export default Vue.extend({
     items: Array
   },
   computed: {
-    connectorPath() {
+    fromItem() {
       const connector: Connector = this.connector;
       const items: FusenItem[] = this.items;
 
-      const fromItem = items.filter(item => {
+      return  items.filter(item => {
         return connector.from === item.id;
       })[0];
-      const toItem = items.filter(item => {
+    },
+    toItem(){
+      const connector: Connector = this.connector;
+      const items: FusenItem[] = this.items;
+
+return items.filter(item => {
         return connector.to === item.id;
       })[0];
+    },
+    connectorPath() {
+      const connector: Connector = this.connector;
+      const items: FusenItem[] = this.items;
+      if (items.length === 0) {
+        return ""
+      }
+
+      const toItem = this.toItem
+      const fromItem = this.fromItem
 
       const start = getConnectPosition(
         fromItem.x,
@@ -122,17 +137,11 @@ export default Vue.extend({
         distance / 2
       );
 
-      if (items.length > 0) {
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
-      }
-      return "";
+      return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
     },
     connectorPathEnd() {
       const connector: Connector = this.connector;
-      const items: FusenItem[] = this.items;
-      const toItem = items.filter(item => {
-        return connector.to === item.id;
-      })[0];
+      const toItem = this.toItem
 
       const end = getConnectPosition(
         toItem.x,
