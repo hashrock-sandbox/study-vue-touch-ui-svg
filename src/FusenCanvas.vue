@@ -10,11 +10,11 @@
     <fusen-selection :selected-item="selectedItem" @resize="resizePoint" @arrow="createArrow"></fusen-selection>
     <path v-if="arrowPreview" class="connector connector--preview" :d="connectorPath(arrowPreview)"></path>
     <g v-if="arrowPreview">
-      <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="item.id" :transform="transformStr(item)">
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'top')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'top')" :cx="item.w / 2" :cy="0" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'left')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'left')" :cx="0" :cy="item.h / 2" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'right')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'right')" :cx="item.w" :cy="item.h / 2" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'bottom')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'bottom')" :cx="item.w / 2" :cy="item.h" r="16"></circle>
+      <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="index" :transform="transformStr(item)">
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 270)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 270)" :cx="item.w / 2" :cy="0" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 180)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 180)" :cx="0" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 0)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 0)" :cx="item.w" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 90)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 90)" :cx="item.w / 2" :cy="item.h" r="16"></circle>
       </g>
     </g>
   </svg>
@@ -32,25 +32,25 @@ function getConnectPosition(
   y: number,
   w: number,
   h: number,
-  position: string,
+  position: number,
   offset: number
 ) {
   let px = x;
   let py = y;
 
-  if (position === "left") {
+  if (position === 180) {
     px -= offset;
     py = y + h / 2;
   }
-  if (position === "top") {
+  if (position === 270) {
     px = x + w / 2;
     py -= offset;
   }
-  if (position === "right") {
+  if (position === 0) {
     px = x + w + offset;
     py = y + h / 2;
   }
-  if (position === "bottom") {
+  if (position === 90) {
     px = x + w / 2;
     py = y + h + offset;
   }
@@ -88,7 +88,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    makeArrow(id: number, type: string) {
+    makeArrow(id: number, type: number) {
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
         this.arrowPreview.toPosition = type;
@@ -100,7 +100,7 @@ export default Vue.extend({
         this.arrowPreview.to = -1;
       }
     },
-    addArrow(id: number, type: string) {
+    addArrow(id: number, type: number) {
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
         this.arrowPreview.toPosition = type;
@@ -116,7 +116,7 @@ export default Vue.extend({
         fromPosition: payload.type,
         to: -1,
         toPoint: [payload.event.clientX, payload.event.clientY],
-        toPosition: "none",
+        toPosition: 0,
         arrowType: ["none", "none"]
       };
     },
@@ -189,16 +189,7 @@ export default Vue.extend({
         distance / 2
       );
 
-      let deg = 0;
-      if (connector.toPosition === "top") {
-        deg = 90 * 3;
-      }
-      if (connector.toPosition === "left") {
-        deg = 90 * 2;
-      }
-      if (connector.toPosition === "bottom") {
-        deg = 90 * 1;
-      }
+      let deg = connector.toPosition;
       const pl = {
         x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
         y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16

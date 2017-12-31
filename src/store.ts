@@ -10,16 +10,16 @@ export interface FusenItem {
   h: number;
   text: string;
   id: number;
-  fromPosition: string;
-  toPosition: string;
+  fromPosition: number;
+  toPosition: number;
 }
 
 export interface Connector {
   id: number;
   from: number;
-  fromPosition: string;
+  fromPosition: number;
   to: number;
-  toPosition: string;
+  toPosition: number;
   toPoint: number[]
   //変更する？
   arrowType: string[];
