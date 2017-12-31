@@ -2,10 +2,10 @@
   <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
     <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
-    <circle class="arrow-handle" @pointerdown="createArrow($event, 'top')" :cx="selectedItem.w / 2" :cy="-20" r="5"></circle>
-    <circle class="arrow-handle" @pointerdown="createArrow($event, 'left')" :cx="-20" :cy="selectedItem.h / 2" r="5"></circle>
-    <circle class="arrow-handle" @pointerdown="createArrow($event, 'right')" :cx="selectedItem.w + 20" :cy="selectedItem.h / 2" r="5"></circle>
-    <circle class="arrow-handle" @pointerdown="createArrow($event, 'bottom')" :cx="selectedItem.w / 2" :cy="selectedItem.h + 20" r="5"></circle>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'top')" :transform="arrowUiShape(270)" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'left')" :transform="arrowUiShape(180)" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'right')" :transform="arrowUiShape(0)" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'bottom')" :transform="arrowUiShape(90)" points="0,-8 8,0 0,8"></polygon>
   </g>
 </template>
 
@@ -42,6 +42,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    arrowUiShape(rotate: number) :string {
+      if(this.selectedItem){
+        if(rotate === 0){
+          return `translate(${this.selectedItem.w + 20}, ${this.selectedItem.h / 2}) rotate(${rotate})`
+        }
+        if(rotate === 90){
+          return `translate(${this.selectedItem.w / 2}, ${this.selectedItem.h + 20}) rotate(${rotate})`
+        }
+        if(rotate === 180){
+          return `translate(-20, ${this.selectedItem.h / 2}) rotate(${rotate})`
+        }
+        if(rotate === 270){
+          return `translate(${this.selectedItem.w / 2}, -20) rotate(${rotate})`
+        }
+      }
+      return ""
+    },
     resizePoint(type: string[]) {
       this.$emit("resize", type);
     },
