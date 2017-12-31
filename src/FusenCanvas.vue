@@ -11,10 +11,10 @@
     <path v-if="arrowPreview" class="connector connector--preview" :d="connectorPath(arrowPreview)"></path>
     <g v-if="arrowPreview">
       <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="item.id" :transform="transformStr(item)">
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'top')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'top')" :cx="item.w / 2" :cy="-20" r="10"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'left')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'left')" :cx="-20" :cy="item.h / 2" r="10"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'right')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'right')" :cx="item.w + 20" :cy="item.h / 2" r="10"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'bottom')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'bottom')" :cx="item.w / 2" :cy="item.h + 20" r="10"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'top')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'top')" :cx="item.w / 2" :cy="0" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'left')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'left')" :cx="0" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'right')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'right')" :cx="item.w" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'bottom')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'bottom')" :cx="item.w / 2" :cy="item.h" r="16"></circle>
       </g>
     </g>
   </svg>
@@ -321,6 +321,6 @@ svg {
 }
 
 .arrow-attach {
-  fill: rgba(255, 255, 255, 0.5);
+  fill: rgba(200, 255, 200, 0.5);
 }
 </style>
