@@ -56,15 +56,15 @@ export default Vue.extend({
       const connector: Connector = this.connector;
       const items: FusenItem[] = this.items;
 
-      return  items.filter(item => {
+      return items.filter(item => {
         return connector.from === item.id;
       })[0];
     },
-    toItem(){
+    toItem() {
       const connector: Connector = this.connector;
       const items: FusenItem[] = this.items;
 
-return items.filter(item => {
+      return items.filter(item => {
         return connector.to === item.id;
       })[0];
     },
@@ -72,11 +72,11 @@ return items.filter(item => {
       const connector: Connector = this.connector;
       const items: FusenItem[] = this.items;
       if (items.length === 0) {
-        return ""
+        return "";
       }
 
-      const toItem = this.toItem
-      const fromItem = this.fromItem
+      const toItem = this.toItem;
+      const fromItem = this.fromItem;
 
       const start = getConnectPosition(
         fromItem.x,
@@ -141,7 +141,7 @@ return items.filter(item => {
     },
     connectorPathEnd() {
       const connector: Connector = this.connector;
-      const toItem = this.toItem
+      const toItem = this.toItem;
 
       const end = getConnectPosition(
         toItem.x,
