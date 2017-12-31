@@ -6,7 +6,10 @@
         <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
     </filter>
     <g>
-      <path v-for="connector in connectors" :key="connector.id" class="connector" :d="connectorPath(connector)"></path>
+      <g v-for="connector in connectors" :key="connector.id" >
+        <path class="connector" :d="connectorPath(connector)"></path>
+        <path class="connector__arrow" :d="connectorPathEnd(connector)"></path>
+      </g>
     </g>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
     <fusen-selection :selected-item="selectedItem" @resize="resizePoint" @arrow="createArrow"></fusen-selection>
@@ -122,6 +125,32 @@ export default Vue.extend({
         arrowType: ["none", "none"]
       };
     },
+    connectorPathEnd(connector: Connector) {
+      const items: FusenItem[] = this.items;
+      const toItem = items.filter(item => {
+        return connector.to === item.id;
+      })[0];
+      
+      const end = getConnectPosition(
+        toItem.x,
+        toItem.y,
+        toItem.w,
+        toItem.h,
+        connector.toPosition,
+        0
+      );
+      let deg = connector.toPosition;
+      const pl = {
+        x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
+        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16
+      };
+      const pr = {
+        x: end.x + Math.cos((deg - 45) * Math.PI / 180) * 16,
+        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16
+      };
+      
+      return `M ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`
+    },
     connectorPath(connector: Connector) {
       const items: FusenItem[] = this.items;
 
@@ -191,18 +220,8 @@ export default Vue.extend({
         distance / 2
       );
 
-      let deg = connector.toPosition;
-      const pl = {
-        x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16
-      };
-      const pr = {
-        x: end.x + Math.cos((deg - 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16
-      };
-
       if (items.length > 0) {
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`;
+        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
       }
       return "";
     },
@@ -309,6 +328,13 @@ svg {
   stroke: black;
   stroke-width: 3px;
 }
+
+.connector__arrow {
+  fill: none;
+  stroke: black;
+  stroke-width: 3px;
+}
+
 .connector--preview {
   stroke: green;
 }
