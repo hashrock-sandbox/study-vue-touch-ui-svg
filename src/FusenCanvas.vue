@@ -5,7 +5,9 @@
         <feOffset result="offsetBlur" dx="2" dy="2" />
         <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
     </filter>
-    <path v-for="connector in connectors" :key="connector.id" class="connector" :d="connectorPath(connector)"></path>
+    <g>
+      <path v-for="connector in connectors" :key="connector.id" class="connector" :d="connectorPath(connector)"></path>
+    </g>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
     <fusen-selection :selected-item="selectedItem" @resize="resizePoint" @arrow="createArrow"></fusen-selection>
     <path v-if="arrowPreview" class="connector connector--preview" :d="connectorPath(arrowPreview)"></path>
