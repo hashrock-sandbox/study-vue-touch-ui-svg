@@ -7,13 +7,14 @@
     </filter>
     <g>
       <g v-for="connector in connectors" :key="connector.id" >
-        <path class="connector" :d="connectorPath(connector)"></path>
-        <path class="connector__arrow" :d="connectorPathEnd(connector)"></path>
+        <connector-path :items="items" :connector="connector"></connector-path>
       </g>
     </g>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
     <fusen-selection :selected-item="selectedItem" @resize="resizePoint" @arrow="createArrow"></fusen-selection>
-    <path v-if="arrowPreview" class="connector connector--preview" :d="connectorPath(arrowPreview)"></path>
+
+    <connector-path v-if="arrowPreview" :items="items" :is-preview="true" :connector="arrowPreview"></connector-path>
+
     <g v-if="arrowPreview">
       <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="index" :transform="transformStr(item)">
         <circle class="arrow-attach" @pointerup="makeArrow(item.id, 270)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 270)" :cx="item.w / 2" :cy="0" r="16"></circle>
@@ -29,44 +30,9 @@
 import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
+import ConnectorPath from "./ConnectorPath.vue";
 import { FusenItem, Connector } from "./store";
 import { mapMutations } from "vuex";
-
-const CONNECTOR_END_OFFSET = 8
-
-function getConnectPosition(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  position: number,
-  offset: number
-) {
-  let px = x;
-  let py = y;
-
-  if (position === 180) {
-    px -= offset;
-    py = y + h / 2;
-  }
-  if (position === 270) {
-    px = x + w / 2;
-    py -= offset;
-  }
-  if (position === 0) {
-    px = x + w + offset;
-    py = y + h / 2;
-  }
-  if (position === 90) {
-    px = x + w / 2;
-    py = y + h + offset;
-  }
-
-  return {
-    x: px,
-    y: py
-  };
-}
 
 export default Vue.extend({
   data() {
@@ -126,106 +92,6 @@ export default Vue.extend({
         toPosition: 0,
         arrowType: ["none", "none"]
       };
-    },
-    connectorPathEnd(connector: Connector) {
-      const items: FusenItem[] = this.items;
-      const toItem = items.filter(item => {
-        return connector.to === item.id;
-      })[0];
-      
-      const end = getConnectPosition(
-        toItem.x,
-        toItem.y,
-        toItem.w,
-        toItem.h,
-        connector.toPosition,
-        CONNECTOR_END_OFFSET
-      );
-      let deg = connector.toPosition;
-      const pl = {
-        x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16
-      };
-      const pr = {
-        x: end.x + Math.cos((deg - 45) * Math.PI / 180) * 16,
-        y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16
-      };
-      
-      return `M ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`
-    },
-    connectorPath(connector: Connector) {
-      const items: FusenItem[] = this.items;
-
-      const fromItem = items.filter(item => {
-        return connector.from === item.id;
-      })[0];
-      const toItem = items.filter(item => {
-        return connector.to === item.id;
-      })[0];
-
-      const start = getConnectPosition(
-        fromItem.x,
-        fromItem.y,
-        fromItem.w,
-        fromItem.h,
-        connector.fromPosition,
-        0
-      );
-
-      let startHandle = getConnectPosition(
-        fromItem.x,
-        fromItem.y,
-        fromItem.w,
-        fromItem.h,
-        connector.fromPosition,
-        50
-      );
-
-      if (!toItem) {
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${connector
-          .toPoint[0]},${connector.toPoint[1]} ${connector
-          .toPoint[0]},${connector.toPoint[1]}`;
-      }
-
-      const end = getConnectPosition(
-        toItem.x,
-        toItem.y,
-        toItem.w,
-        toItem.h,
-        connector.toPosition,
-        CONNECTOR_END_OFFSET
-      );
-
-      let distance = Math.pow(
-        Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2),
-        0.5
-      );
-      if (distance > 200) {
-        distance = 200;
-      }
-
-      startHandle = getConnectPosition(
-        fromItem.x,
-        fromItem.y,
-        fromItem.w,
-        fromItem.h,
-        connector.fromPosition,
-        distance / 2
-      );
-
-      const endHandle = getConnectPosition(
-        toItem.x,
-        toItem.y,
-        toItem.w,
-        toItem.h,
-        connector.toPosition,
-        distance / 2
-      );
-
-      if (items.length > 0) {
-        return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
-      }
-      return "";
     },
     resizePoint(type: string[]) {
       this.dragging = "resize";
@@ -295,7 +161,8 @@ export default Vue.extend({
   },
   components: {
     FusenGroup,
-    FusenSelection
+    FusenSelection,
+    ConnectorPath
   }
 });
 
@@ -323,22 +190,6 @@ svg {
 .item {
   fill: white;
   stroke: black;
-}
-
-.connector {
-  fill: none;
-  stroke: black;
-  stroke-width: 3px;
-}
-
-.connector__arrow {
-  fill: none;
-  stroke: black;
-  stroke-width: 3px;
-}
-
-.connector--preview {
-  stroke: green;
 }
 
 .arrow-attach {
