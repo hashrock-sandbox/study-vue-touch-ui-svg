@@ -32,6 +32,8 @@ import FusenSelection from "./FusenSelection.vue";
 import { FusenItem, Connector } from "./store";
 import { mapMutations } from "vuex";
 
+const CONNECTOR_END_OFFSET = 8
+
 function getConnectPosition(
   x: number,
   y: number,
@@ -137,7 +139,7 @@ export default Vue.extend({
         toItem.w,
         toItem.h,
         connector.toPosition,
-        0
+        CONNECTOR_END_OFFSET
       );
       let deg = connector.toPosition;
       const pl = {
@@ -191,7 +193,7 @@ export default Vue.extend({
         toItem.w,
         toItem.h,
         connector.toPosition,
-        0
+        CONNECTOR_END_OFFSET
       );
 
       let distance = Math.pow(
