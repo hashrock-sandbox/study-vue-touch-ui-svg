@@ -44,17 +44,18 @@ export default Vue.extend({
   methods: {
     arrowUiShape(rotate: number) :string {
       if(this.selectedItem){
+        const offset = 16;
         if(rotate === 0){
-          return `translate(${this.selectedItem.w + 20}, ${this.selectedItem.h / 2}) rotate(${rotate})`
+          return `translate(${this.selectedItem.w + offset}, ${this.selectedItem.h / 2}) rotate(${rotate})`
         }
         if(rotate === 90){
-          return `translate(${this.selectedItem.w / 2}, ${this.selectedItem.h + 20}) rotate(${rotate})`
+          return `translate(${this.selectedItem.w / 2}, ${this.selectedItem.h + offset}) rotate(${rotate})`
         }
         if(rotate === 180){
-          return `translate(-20, ${this.selectedItem.h / 2}) rotate(${rotate})`
+          return `translate(${-offset}, ${this.selectedItem.h / 2}) rotate(${rotate})`
         }
         if(rotate === 270){
-          return `translate(${this.selectedItem.w / 2}, -20) rotate(${rotate})`
+          return `translate(${this.selectedItem.w / 2}, ${-offset}) rotate(${rotate})`
         }
       }
       return ""
