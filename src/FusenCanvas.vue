@@ -26,12 +26,18 @@
 
     <g :transform="arrowMenuPosition" v-if="showArrowMenu" @pointerleave="onLeaveArrowMenu">
       <rect x="-60" y="-60" width="120" height="90" fill="rgba(0,0,0,0)"></rect>
-      <circle @click="selectArrowItem" class="arrow-menu-item" r=20 :cx="-40" :cy="-40"></circle>
-      <circle class="arrow-menu-item" r=20 :cx="0" :cy="-40"></circle>
-      <circle class="arrow-menu-item" r=20 :cx="40" :cy="-40"></circle>
+      <circle @click="selectArrowItem('remove')" class="arrow-menu-item" r=20 :cx="-40" :cy="-40"></circle>
+      <circle @click="selectArrowItem('none')" class="arrow-menu-item" r=20 :cx="0" :cy="-40"></circle>
+      <circle @click="selectArrowItem('arrow')" class="arrow-menu-item" r=20 :cx="40" :cy="-40"></circle>
       <g transform="translate(-50, -50)" style="pointer-events: none;">
         <path d="M0,0 L20,20 M20,0 L0,20" stroke-width="2" stroke="black"></path>
       </g>
+      <g transform="translate(-10, -50)" style="pointer-events: none;">
+        <path d="M-10,10 L15,10" stroke-width="2" stroke="black"></path>
+      </g>
+      <g transform="translate(30, -50)" style="pointer-events: none;">
+        <path d="M-10,10 L15,10 L10,5 M15,10 L10,15" stroke-width="2" stroke="black" fill="none"></path>
+      </g>      
     </g>
   </svg>
 </template>
@@ -81,8 +87,22 @@ export default Vue.extend({
     }
   },
   methods: {
-    selectArrowItem(){
-      this.$store.commit("removeConnector", this.selectedConnectorId);
+    selectArrowItem(type: string){
+      if(type === "remove"){
+        this.$store.commit("removeConnector", this.selectedConnectorId);
+      }
+      if(type === "arrow"){
+        this.$store.commit("changeConnectorType", {
+          id: this.selectedConnectorId,
+          type: "arrow"
+        });
+      }
+      if(type === "none"){
+        this.$store.commit("changeConnectorType", {
+          id: this.selectedConnectorId,
+          type: "none"
+        });
+      }
       this.onLeaveArrowMenu()
     },
     onLeaveArrowMenu(){

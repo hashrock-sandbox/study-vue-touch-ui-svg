@@ -1,7 +1,7 @@
 <template>
   <g>
     <path class="connector" :class="{'connector--preview' : isPreview}" :d="connectorPath"></path>
-    <path v-if="!isPreview" class="connector__arrow" :d="connectorPathEnd"></path>
+    <path v-if="!isPreview && isEndArrow" class="connector__arrow" :d="connectorPathEnd"></path>
     <circle fill="rgba(0,0,0,0)" v-if="!isPreview" r=20 :cx="positionEnd.x" :cy="positionEnd.y" @pointerenter="onEnterConnectorEnd" @pointerleave="onLeaveConnectorEnd"></circle>
   </g>
 </template>
@@ -59,6 +59,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    isEndArrow(): boolean{
+      return this.connector.arrowType[1] === "arrow"
+    },
     fromItem(): FusenItem {
       const connector: Connector = this.connector;
       const items: FusenItem[] = this.items;

@@ -111,6 +111,12 @@ export default new Vuex.Store({
       state.connectors = state.connectors.filter((item)=>{
         return item.id !== payload
       })
+    },
+    changeConnectorType(state, payload){
+      const selectedConnector = state.connectors.filter((item)=>{
+        return item.id === payload.id
+      })[0]
+      selectedConnector.arrowType = ["none", payload.type]
     }
   }
 })
