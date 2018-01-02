@@ -23,6 +23,16 @@
         <circle class="arrow-attach" @pointerup="makeArrow(item.id, 90)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 90)" :cx="item.w / 2" :cy="item.h" r="16"></circle>
       </g>
     </g>
+
+    <g :transform="arrowMenuPosition" v-if="showArrowMenu" @pointerleave="onLeaveArrowMenu">
+      <rect x="-60" y="-60" width="120" height="90" fill="rgba(0,0,0,0)"></rect>
+      <circle @click="selectArrowItem" class="arrow-menu-item" r=20 :cx="-40" :cy="-40"></circle>
+      <circle class="arrow-menu-item" r=20 :cx="0" :cy="-40"></circle>
+      <circle class="arrow-menu-item" r=20 :cx="40" :cy="-40"></circle>
+      <g transform="translate(-50, -50)" style="pointer-events: none;">
+        <path d="M0,0 L20,20 M20,0 L0,20" stroke-width="2" stroke="black"></path>
+      </g>
+    </g>
   </svg>
 </template>
 
@@ -31,7 +41,7 @@ import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
 import ConnectorPath from "./ConnectorPath.vue";
-import { FusenItem, Connector } from "./store";
+import { FusenItem, Connector, Point } from "./store";
 import { mapMutations } from "vuex";
 
 export default Vue.extend({
@@ -58,9 +68,32 @@ export default Vue.extend({
     },
     connectors(): Connector[] {
       return this.$store.state.connectors;
+    },
+    selectedConnectorId(): Connector[] {
+      return this.$store.state.selectedConnectorId;
+    },    
+    showArrowMenu(): boolean {
+      return this.$store.state.showArrowMenu
+    },
+    arrowMenuPosition(){
+      const end: Point = this.$store.state.arrowMenuPosition;
+      return `translate(${end.x},${end.y})`
     }
   },
   methods: {
+    selectArrowItem(){
+      this.$store.commit("removeConnector", this.selectedConnectorId);
+      this.onLeaveArrowMenu()
+    },
+    onLeaveArrowMenu(){
+      this.$store.commit("showArrowTypeMenu", {
+        showArrowMenu: false,
+        arrowMenuPosition: {
+          x: 0,
+          y: 0
+        }
+      });
+    },
     makeArrow(id: number, type: number) {
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
@@ -194,5 +227,16 @@ svg {
 
 .arrow-attach {
   fill: rgba(200, 255, 200, 0.5);
+}
+
+.arrow-menu-item{
+  fill: white;
+  stroke: black;
+  stroke-width: 1px;
+  z-index: 10000;
+}
+
+.arrow-menu-item:hover{
+  fill: gray;
 }
 </style>

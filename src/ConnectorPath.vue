@@ -2,21 +2,18 @@
   <g>
     <path class="connector" :class="{'connector--preview' : isPreview}" :d="connectorPath"></path>
     <path v-if="!isPreview" class="connector__arrow" :d="connectorPathEnd"></path>
-    <circle r=20></circle>
+    <circle fill="rgba(0,0,0,0)" v-if="!isPreview" r=20 :cx="positionEnd.x" :cy="positionEnd.y" @pointerenter="onEnterConnectorEnd" @pointerleave="onLeaveConnectorEnd"></circle>
   </g>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 
-import { FusenItem, Connector } from "./store";
+import { FusenItem, Connector, Point } from "./store";
 
 const CONNECTOR_END_OFFSET = 8;
 
-interface Point {
-  x: number;
-  y: number;
-}
+
 
 function getConnectPosition(
   x: number,
@@ -56,6 +53,10 @@ export default Vue.extend({
     connector: Object,
     isPreview: Boolean,
     items: Array
+  },
+  data(){
+    return {
+    }
   },
   computed: {
     fromItem(): FusenItem {
@@ -181,7 +182,21 @@ export default Vue.extend({
       return `M ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`;
     }
   },
-  methods: {}
+  methods: {
+    onEnterConnectorEnd(){
+      const end: Point = this.positionEnd;
+      this.$store.commit("showArrowTypeMenu", {
+        showArrowMenu: true,
+        arrowMenuPosition: {
+          x: end.x,
+          y: end.y
+        },
+        selectedConnectorId: this.connector.id
+      });
+    },
+    onLeaveConnectorEnd(){
+    }
+  }
 });
 </script>
 

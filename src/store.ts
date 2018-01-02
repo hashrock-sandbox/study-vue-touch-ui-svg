@@ -25,10 +25,21 @@ export interface Connector {
   arrowType: string[];
 }
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
 export default new Vuex.Store({
   state: {
     selectedIndex: -1,
     editingText: "",
+    showArrowMenu: false,
+    selectedConnectorId: -1,
+    arrowMenuPosition: {
+      x: 0,
+      y: 0
+    },
     items: [
       {
         x: 10,
@@ -89,7 +100,17 @@ export default new Vuex.Store({
     createArrow(state, payload) {
       payload.id = state.connectors.length
       state.connectors.push(payload)
+    },
+    showArrowTypeMenu(state, payload){
+      state.showArrowMenu = payload.showArrowMenu
+      state.arrowMenuPosition.x = payload.arrowMenuPosition.x
+      state.arrowMenuPosition.y = payload.arrowMenuPosition.y
+      state.selectedConnectorId = payload.selectedConnectorId
+    },
+    removeConnector(state, payload){
+      state.connectors = state.connectors.filter((item)=>{
+        return item.id !== payload
+      })
     }
-
   }
 })
