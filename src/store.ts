@@ -98,7 +98,10 @@ export default new Vuex.Store({
       state.editingText = value
     },
     createArrow(state, payload) {
-      payload.id = state.connectors.length
+      // idは全connector.idのmax + 1
+      payload.id = state.connectors
+        .map(item=>item.id)
+        .reduce(((x, y) => (x > y) ? x : y), 0) + 1
       state.connectors.push(payload)
     },
     showArrowTypeMenu(state, payload){
