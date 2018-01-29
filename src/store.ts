@@ -1,34 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { FusenItem, Connector, Point } from "./shapes";
 
 Vue.use(Vuex);
-
-export interface FusenItem {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  text: string;
-  id: number;
-  fromPosition: number;
-  toPosition: number;
-}
-
-export interface Connector {
-  id: number;
-  from: number;
-  fromPosition: number;
-  to: number;
-  toPosition: number;
-  toPoint: number[];
-  //変更する？
-  arrowType: string[];
-}
-
-export interface Point {
-  x: number;
-  y: number;
-}
 
 export default new Vuex.Store({
   state: {

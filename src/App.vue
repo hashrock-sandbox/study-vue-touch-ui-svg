@@ -14,7 +14,7 @@
 <script lang="ts">
 import Vue from "vue";
 import FusenCanvas from "./FusenCanvas.vue";
-import { FusenItem } from "./store";
+import { FusenItem } from "./shapes";
 
 export default Vue.extend({
   computed: {

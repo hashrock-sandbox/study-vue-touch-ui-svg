@@ -42,7 +42,7 @@ import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
 import ConnectorPath from "./ConnectorPath.vue";
-import { FusenItem, Connector, Point } from "./store";
+import { FusenItem, Connector, Point } from "./shapes";
 import { mapMutations } from "vuex";
 
 export default Vue.extend({

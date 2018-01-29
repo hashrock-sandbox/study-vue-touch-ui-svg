@@ -9,41 +9,8 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { FusenItem, Connector, Point } from "./store";
+import { FusenItem, Connector, Point, getConnectPosition } from "./shapes";
 
-function getConnectPosition(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  position: number,
-  offset: number
-): Point {
-  let px = x;
-  let py = y;
-
-  if (position === 180) {
-    px -= offset;
-    py = y + h / 2;
-  }
-  if (position === 270) {
-    px = x + w / 2;
-    py -= offset;
-  }
-  if (position === 0) {
-    px = x + w + offset;
-    py = y + h / 2;
-  }
-  if (position === 90) {
-    px = x + w / 2;
-    py = y + h + offset;
-  }
-
-  return {
-    x: px,
-    y: py
-  };
-}
 export default Vue.extend({
   props: {
     connector: Object,
