@@ -1,10 +1,5 @@
 <template>
   <svg id="canv" width="800" height="800" @pointermove="onDrag" @pointerup="stopDrag">
-    <filter id="drop-shadow" width="150%" height="150%">
-        <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="2" />
-        <feOffset result="offsetBlur" dx="2" dy="2" />
-        <feBlend in="SourceGraphic" in2="offsetBlur" mode="normal" />
-    </filter>
     <g>
       <g v-for="connector in connectors" :key="connector.id" >
         <connector-path :items="items" :connector="connector"></connector-path>
@@ -227,7 +222,7 @@ function gridRound(value: number) {
 <style>
 svg {
   touch-action: none;
-  background: #fcc;
+  background: #f3f3f3;
   position: absolute;
   /*opacity: 0.9;*/
 }
@@ -258,5 +253,9 @@ svg {
 
 .arrow-menu-item:hover{
   fill: gray;
+}
+
+rect{
+  shape-rendering: crispEdges;
 }
 </style>

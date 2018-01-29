@@ -11,9 +11,6 @@ import Vue from "vue";
 
 import { FusenItem, Connector, Point } from "./store";
 
-const CONNECTOR_END_OFFSET = 8;
-
-
 
 function getConnectPosition(
   x: number,
@@ -110,7 +107,7 @@ export default Vue.extend({
           toItem.w,
           toItem.h,
           this.connector.toPosition,
-          CONNECTOR_END_OFFSET
+          0
         );
       }
 
