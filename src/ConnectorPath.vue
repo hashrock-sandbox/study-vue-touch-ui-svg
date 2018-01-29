@@ -11,7 +11,6 @@ import Vue from "vue";
 
 import { FusenItem, Connector, Point } from "./store";
 
-
 function getConnectPosition(
   x: number,
   y: number,
@@ -51,13 +50,12 @@ export default Vue.extend({
     isPreview: Boolean,
     items: Array
   },
-  data(){
-    return {
-    }
+  data() {
+    return {};
   },
   computed: {
-    isEndArrow(): boolean{
-      return this.connector.arrowType[1] === "arrow"
+    isEndArrow(): boolean {
+      return this.connector.arrowType[1] === "arrow";
     },
     fromItem(): FusenItem {
       const connector: Connector = this.connector;
@@ -162,7 +160,9 @@ export default Vue.extend({
       const end: Point = this.positionEnd;
       const endHandle: Point = this.positionEndHandle;
 
-      return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${endHandle.x},${endHandle.y} ${end.x},${end.y}`;
+      return `M${start.x},${start.y} C${startHandle.x},${startHandle.y} ${
+        endHandle.x
+      },${endHandle.y} ${end.x},${end.y}`;
     },
     connectorPathEnd() {
       const connector: Connector = this.connector;
@@ -179,11 +179,13 @@ export default Vue.extend({
         y: end.y + Math.sin((deg - 45) * Math.PI / 180) * 16
       };
 
-      return `M ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${pr.x},${pr.y}`;
+      return `M ${end.x},${end.y} L ${pl.x},${pl.y} M ${end.x},${end.y} L ${
+        pr.x
+      },${pr.y}`;
     }
   },
   methods: {
-    onEnterConnectorEnd(){
+    onEnterConnectorEnd() {
       const end: Point = this.positionEnd;
       this.$store.commit("showArrowTypeMenu", {
         showArrowMenu: true,
@@ -194,8 +196,7 @@ export default Vue.extend({
         selectedConnectorId: this.connector.id
       });
     },
-    onLeaveConnectorEnd(){
-    }
+    onLeaveConnectorEnd() {}
   }
 });
 </script>

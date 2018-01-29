@@ -13,57 +13,59 @@
 
 <script lang="ts">
 import Vue from "vue";
-import FusenCanvas from "./FusenCanvas.vue"
+import FusenCanvas from "./FusenCanvas.vue";
 import { FusenItem } from "./store";
 
 export default Vue.extend({
   computed: {
-    editing(): boolean{
-      return this.$store.state.editing
+    editing(): boolean {
+      return this.$store.state.editing;
     },
     selectedItem(): FusenItem {
       return this.$store.state.items[this.$store.state.selectedIndex];
     },
-    styleObj(){
-      const selected: FusenItem = this.selectedItem
-      if(this.selectedItem){
+    styleObj() {
+      const selected: FusenItem = this.selectedItem;
+      if (this.selectedItem) {
         return {
           top: selected.y + "px",
           left: selected.x + "px",
           width: selected.w + "px",
           height: selected.h + "px"
-        }
+        };
       }
-      return {}
+      return {};
     },
     editingText: {
-      get (): string {
-        return this.$store.state.editingText
+      get(): string {
+        return this.$store.state.editingText;
       },
-      set (value: string) {
-        this.$store.commit('updateEditor', value)
+      set(value: string) {
+        this.$store.commit("updateEditor", value);
       }
     }
   },
   methods: {
-    editItem(){
-      this.$store.commit("editItem", this.editingText)
+    editItem() {
+      this.$store.commit("editItem", this.editingText);
     }
   },
   components: {
     FusenCanvas
   },
-  watch:{
-    editing(value){
-      if(value){
-        Vue.nextTick(()=>{
-          const el = <HTMLTextAreaElement>(this.$el.querySelector(".editor__textarea"))
-          el.focus()
-        })
+  watch: {
+    editing(value) {
+      if (value) {
+        Vue.nextTick(() => {
+          const el = <HTMLTextAreaElement>this.$el.querySelector(
+            ".editor__textarea"
+          );
+          el.focus();
+        });
       }
     }
   }
-})
+});
 </script>
 
 <style>
@@ -72,14 +74,13 @@ body {
   margin: 0;
 }
 
-
 #app {
   width: 800px;
   height: 800px;
   position: relative;
 }
 
-.editor{
+.editor {
   top: 0;
   left: 0;
   width: 800px;
@@ -87,7 +88,7 @@ body {
   position: absolute;
 }
 
-.editor__frame{
+.editor__frame {
   position: absolute;
   top: 0;
   left: 0;
@@ -95,11 +96,10 @@ body {
   width: 300px;
   height: 300px;
 }
-.editor__textarea{
+.editor__textarea {
   flex: 1;
   height: 100%;
   padding: 0.5rem;
   border: 1px solid blue;
 }
-
 </style>

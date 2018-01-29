@@ -72,35 +72,35 @@ export default Vue.extend({
     },
     selectedConnectorId(): Connector[] {
       return this.$store.state.selectedConnectorId;
-    },    
-    showArrowMenu(): boolean {
-      return this.$store.state.showArrowMenu
     },
-    arrowMenuPosition(){
+    showArrowMenu(): boolean {
+      return this.$store.state.showArrowMenu;
+    },
+    arrowMenuPosition() {
       const end: Point = this.$store.state.arrowMenuPosition;
-      return `translate(${end.x},${end.y})`
+      return `translate(${end.x},${end.y})`;
     }
   },
   methods: {
-    selectArrowItem(type: string){
-      if(type === "remove"){
+    selectArrowItem(type: string) {
+      if (type === "remove") {
         this.$store.commit("removeConnector", this.selectedConnectorId);
       }
-      if(type === "arrow"){
+      if (type === "arrow") {
         this.$store.commit("changeConnectorType", {
           id: this.selectedConnectorId,
           type: "arrow"
         });
       }
-      if(type === "none"){
+      if (type === "none") {
         this.$store.commit("changeConnectorType", {
           id: this.selectedConnectorId,
           type: "none"
         });
       }
-      this.onLeaveArrowMenu()
+      this.onLeaveArrowMenu();
     },
-    onLeaveArrowMenu(){
+    onLeaveArrowMenu() {
       this.$store.commit("showArrowTypeMenu", {
         showArrowMenu: false,
         arrowMenuPosition: {
@@ -244,18 +244,18 @@ svg {
   fill: rgba(200, 255, 200, 0.5);
 }
 
-.arrow-menu-item{
+.arrow-menu-item {
   fill: white;
   stroke: black;
   stroke-width: 1px;
   z-index: 10000;
 }
 
-.arrow-menu-item:hover{
+.arrow-menu-item:hover {
   fill: gray;
 }
 
-rect{
+rect {
   shape-rendering: crispEdges;
 }
 </style>

@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export interface FusenItem {
   x: number;
@@ -20,7 +20,7 @@ export interface Connector {
   fromPosition: number;
   to: number;
   toPosition: number;
-  toPoint: number[]
+  toPoint: number[];
   //変更する？
   arrowType: string[];
 }
@@ -65,61 +65,61 @@ export default new Vuex.Store({
         text: "TestTest",
         id: 2
       }
-
     ] as FusenItem[],
     connectors: [] as Connector[],
     editing: false
   },
   mutations: {
     moveItem(state, payload) {
-      state.items[state.selectedIndex].x = payload.x
-      state.items[state.selectedIndex].y = payload.y
+      state.items[state.selectedIndex].x = payload.x;
+      state.items[state.selectedIndex].y = payload.y;
     },
     resizeItem(state, payload) {
-      state.items[state.selectedIndex].x = payload.x
-      state.items[state.selectedIndex].y = payload.y
-      state.items[state.selectedIndex].w = payload.w
-      state.items[state.selectedIndex].h = payload.h
+      state.items[state.selectedIndex].x = payload.x;
+      state.items[state.selectedIndex].y = payload.y;
+      state.items[state.selectedIndex].w = payload.w;
+      state.items[state.selectedIndex].h = payload.h;
     },
     selectItem(state, index) {
-      state.selectedIndex = index
+      state.selectedIndex = index;
     },
     openEditor(state, index) {
-      state.editing = true
-      state.selectedIndex = index
-      state.editingText = state.items[index].text
+      state.editing = true;
+      state.selectedIndex = index;
+      state.editingText = state.items[index].text;
     },
     editItem(state, text) {
-      state.items[state.selectedIndex].text = text
-      state.editingText = ""
-      state.editing = false
+      state.items[state.selectedIndex].text = text;
+      state.editingText = "";
+      state.editing = false;
     },
     updateEditor(state, value) {
-      state.editingText = value
+      state.editingText = value;
     },
     createArrow(state, payload) {
       // idは全connector.idのmax + 1
-      payload.id = state.connectors
-        .map(item=>item.id)
-        .reduce(((x, y) => (x > y) ? x : y), 0) + 1
-      state.connectors.push(payload)
+      payload.id =
+        state.connectors
+          .map(item => item.id)
+          .reduce((x, y) => (x > y ? x : y), 0) + 1;
+      state.connectors.push(payload);
     },
-    showArrowTypeMenu(state, payload){
-      state.showArrowMenu = payload.showArrowMenu
-      state.arrowMenuPosition.x = payload.arrowMenuPosition.x
-      state.arrowMenuPosition.y = payload.arrowMenuPosition.y
-      state.selectedConnectorId = payload.selectedConnectorId
+    showArrowTypeMenu(state, payload) {
+      state.showArrowMenu = payload.showArrowMenu;
+      state.arrowMenuPosition.x = payload.arrowMenuPosition.x;
+      state.arrowMenuPosition.y = payload.arrowMenuPosition.y;
+      state.selectedConnectorId = payload.selectedConnectorId;
     },
-    removeConnector(state, payload){
-      state.connectors = state.connectors.filter((item)=>{
-        return item.id !== payload
-      })
+    removeConnector(state, payload) {
+      state.connectors = state.connectors.filter(item => {
+        return item.id !== payload;
+      });
     },
-    changeConnectorType(state, payload){
-      const selectedConnector = state.connectors.filter((item)=>{
-        return item.id === payload.id
-      })[0]
-      selectedConnector.arrowType = ["none", payload.type]
+    changeConnectorType(state, payload) {
+      const selectedConnector = state.connectors.filter(item => {
+        return item.id === payload.id;
+      })[0];
+      selectedConnector.arrowType = ["none", payload.type];
     }
   }
-})
+});
