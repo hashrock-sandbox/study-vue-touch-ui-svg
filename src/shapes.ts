@@ -104,55 +104,29 @@ export interface Connector {
   arrowType: string[];
 }
 
-export function getBoundPoint(item: Rect) {
-  return function(degree: string): Point {
-    const calc = [
-      { degree: "0", o: { x: item.w, y: item.h / 2 } },
-      { degree: "45", o: { x: item.w, y: item.h } },
-      { degree: "90", o: { x: item.w / 2, y: item.h } },
-      { degree: "135", o: { x: 0, y: item.h } },
-      { degree: "180", o: { x: 0, y: item.h / 2 } },
-      { degree: "225", o: { x: item.w, y: 0 } },
-      { degree: "270", o: { x: item.w / 2, y: 0 } },
-      { degree: "315", o: { x: 0, y: 0 } }
-    ];
-
-    for (const c of calc) {
-      if (c.degree === degree) {
-        return c.o;
-      }
-    }
-
-    return { x: 0, y: 0 };
-  };
-}
-
 export function getConnectPosition(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
+  item: FusenItem,
   position: number,
   offset: number
 ): Point {
-  let px = x;
-  let py = y;
+  let px = item.x;
+  let py = item.y;
 
-  if (position === 180) {
-    px -= offset;
-    py = y + h / 2;
-  }
-  if (position === 270) {
-    px = x + w / 2;
-    py -= offset;
-  }
   if (position === 0) {
-    px = x + w + offset;
-    py = y + h / 2;
+    px = item.right.x + offset;
+    py = item.right.y;
   }
   if (position === 90) {
-    px = x + w / 2;
-    py = y + h + offset;
+    px = item.bottom.x;
+    py = item.bottom.y + offset;
+  }
+  if (position === 180) {
+    px -= offset;
+    py = item.left.y;
+  }
+  if (position === 270) {
+    px = item.top.x;
+    py -= offset;
   }
 
   return { x: px, y: py };

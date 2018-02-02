@@ -42,22 +42,12 @@ export default Vue.extend({
     },
     positionStart(): Point {
       const fromItem: FusenItem = this.fromItem;
-      return getConnectPosition(
-        fromItem.x,
-        fromItem.y,
-        fromItem.w,
-        fromItem.h,
-        this.connector.fromPosition,
-        0
-      );
+      return getConnectPosition(fromItem, this.connector.fromPosition, 0);
     },
     positionStartHandle(): Point {
       const fromItem: FusenItem = this.fromItem;
       return getConnectPosition(
-        fromItem.x,
-        fromItem.y,
-        fromItem.w,
-        fromItem.h,
+        fromItem,
         this.connector.fromPosition,
         this.distance / 2
       );
@@ -66,33 +56,23 @@ export default Vue.extend({
       const toItem: FusenItem = this.toItem;
 
       if (toItem) {
-        return getConnectPosition(
-          toItem.x,
-          toItem.y,
-          toItem.w,
-          toItem.h,
-          this.connector.toPosition,
-          0
-        );
+        return getConnectPosition(toItem, this.connector.toPosition, 0);
       }
 
-      return {x:this.connector.toPoint[0],y: this.connector.toPoint[1]};
+      return { x: this.connector.toPoint[0], y: this.connector.toPoint[1] };
     },
     positionEndHandle(): Point {
       const toItem: FusenItem = this.toItem;
 
       if (toItem) {
         return getConnectPosition(
-          toItem.x,
-          toItem.y,
-          toItem.w,
-          toItem.h,
+          toItem,
           this.connector.toPosition,
           this.distance / 2
         );
       }
 
-      return {x:this.connector.toPoint[0],y: this.connector.toPoint[1]};
+      return { x: this.connector.toPoint[0], y: this.connector.toPoint[1] };
     },
     distance() {
       const start: Point = this.positionStart;
