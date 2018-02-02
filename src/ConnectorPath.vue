@@ -76,10 +76,7 @@ export default Vue.extend({
         );
       }
 
-      return {
-        x: this.connector.toPoint[0],
-        y: this.connector.toPoint[1]
-      };
+      return {x:this.connector.toPoint[0],y: this.connector.toPoint[1]};
     },
     positionEndHandle(): Point {
       const toItem: FusenItem = this.toItem;
@@ -95,10 +92,7 @@ export default Vue.extend({
         );
       }
 
-      return {
-        x: this.connector.toPoint[0],
-        y: this.connector.toPoint[1]
-      };
+      return {x:this.connector.toPoint[0],y: this.connector.toPoint[1]};
     },
     distance() {
       const start: Point = this.positionStart;
