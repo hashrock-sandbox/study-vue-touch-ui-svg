@@ -9,7 +9,22 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { FusenItem, Connector, Point, getConnectPosition } from "./shapes";
+import {
+  FusenItem,
+  Connector,
+  Point,
+  getConnectPosition,
+  Position
+} from "./shapes";
+
+function toDegree(p: Position) {
+  return {
+    right: 0,
+    bottom: 90,
+    left: 180,
+    top: 270
+  }[p];
+}
 
 export default Vue.extend({
   props: {
@@ -110,7 +125,7 @@ export default Vue.extend({
       const toItem = this.toItem;
 
       const end: Point = this.positionEnd;
-      let deg = connector.toPosition;
+      let deg = toDegree(connector.toPosition);
       const pl = {
         x: end.x + Math.cos((deg + 45) * Math.PI / 180) * 16,
         y: end.y + Math.sin((deg + 45) * Math.PI / 180) * 16

@@ -12,10 +12,10 @@
 
     <g v-if="arrowPreview">
       <g v-for="(item, index) in items" v-show="index !== selectedIndex" :key="index" :transform="transformStr(item)">
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 270)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 270)" :cx="item.w / 2" :cy="0" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 180)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 180)" :cx="0" :cy="item.h / 2" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 0)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 0)" :cx="item.w" :cy="item.h / 2" r="16"></circle>
-        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 90)" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 90)" :cx="item.w / 2" :cy="item.h" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'top')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'top')" :cx="item.w / 2" :cy="0" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'left')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'left')" :cx="0" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'right')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'right')" :cx="item.w" :cy="item.h / 2" r="16"></circle>
+        <circle class="arrow-attach" @pointerup="makeArrow(item.id, 'bottom')" @pointerleave="removeArrow" @pointermove="addArrow(item.id, 'bottom')" :cx="item.w / 2" :cy="item.h" r="16"></circle>
       </g>
     </g>
 
@@ -42,7 +42,7 @@ import Vue from "vue";
 import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
 import ConnectorPath from "./ConnectorPath.vue";
-import { FusenItem, Connector, Point } from "./shapes";
+import { FusenItem, Connector, Point, Position } from "./shapes";
 import { mapMutations } from "vuex";
 
 export default Vue.extend({
@@ -109,7 +109,7 @@ export default Vue.extend({
         }
       });
     },
-    makeArrow(id: number, type: number) {
+    makeArrow(id: number, type: Position) {
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
         this.arrowPreview.toPosition = type;
@@ -121,7 +121,7 @@ export default Vue.extend({
         this.arrowPreview.to = -1;
       }
     },
-    addArrow(id: number, type: number) {
+    addArrow(id: number, type: Position) {
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
         this.arrowPreview.toPosition = type;
@@ -137,7 +137,7 @@ export default Vue.extend({
         fromPosition: payload.type,
         to: -1,
         toPoint: [payload.event.clientX, payload.event.clientY],
-        toPosition: 0,
+        toPosition: "right",
         arrowType: ["none", "none"]
       };
     },

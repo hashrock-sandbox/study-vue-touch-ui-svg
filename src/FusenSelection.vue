@@ -2,10 +2,10 @@
   <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
     <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.pos.x - size / 2" :y="handle.pos.y - size / 2" :width="size" :height="size"></rect>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 270)" :transform="arrowUiShape(270)" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 180)" :transform="arrowUiShape(180)" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 0)" :transform="arrowUiShape(0)" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 90)" :transform="arrowUiShape(90)" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'top')" :transform="arrowUiShape('top')" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'left')" :transform="arrowUiShape('left')" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'right')" :transform="arrowUiShape('right')" points="0,-8 8,0 0,8"></polygon>
+    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'bottom')" :transform="arrowUiShape('bottom')" points="0,-8 8,0 0,8"></polygon>
   </g>
 </template>
 
@@ -46,24 +46,24 @@ export default Vue.extend({
     }
   },
   methods: {
-    arrowUiShape(rotate: number): string {
+    arrowUiShape(rotate: string): string {
       if (this.selectedItem) {
         const offset = 16;
-        if (rotate === 0) {
+        if (rotate === "right") {
           return `translate(${this.selectedItem.w + offset}, ${this.selectedItem
-            .h / 2}) rotate(${rotate})`;
+            .h / 2}) rotate(0)`;
         }
-        if (rotate === 90) {
+        if (rotate === "bottom") {
           return `translate(${this.selectedItem.w / 2}, ${this.selectedItem.h +
-            offset}) rotate(${rotate})`;
+            offset}) rotate(90)`;
         }
-        if (rotate === 180) {
+        if (rotate === "left") {
           return `translate(${-offset}, ${this.selectedItem.h /
-            2}) rotate(${rotate})`;
+            2}) rotate(180)`;
         }
-        if (rotate === 270) {
+        if (rotate === "top") {
           return `translate(${this.selectedItem.w /
-            2}, ${-offset}) rotate(${rotate})`;
+            2}, ${-offset}) rotate(270)`;
         }
       }
       return "";
@@ -71,7 +71,7 @@ export default Vue.extend({
     resizePoint(type: string[]) {
       this.$emit("resize", type);
     },
-    createArrow(event: PointerEvent, type: number) {
+    createArrow(event: PointerEvent, type: string) {
       this.$emit("arrow", { type: type, event: event });
     }
   }

@@ -89,42 +89,44 @@ export class Rect {
 export class FusenItem extends Rect {
   text: string;
   id: number;
-  fromPosition: number;
-  toPosition: number;
+  fromPosition: Position;
+  toPosition: Position;
 }
 
 export interface Connector {
   id: number;
   from: number;
-  fromPosition: number;
+  fromPosition: Position;
   to: number;
-  toPosition: number;
+  toPosition: Position;
   toPoint: number[];
   //変更する？
   arrowType: string[];
 }
 
+export type Position = "right" | "bottom" | "left" | "top";
+
 export function getConnectPosition(
   item: FusenItem,
-  position: number,
+  position: Position,
   offset: number
 ): Point {
   let px = item.x;
   let py = item.y;
 
-  if (position === 0) {
+  if (position === "right") {
     px = item.right.x + offset;
     py = item.right.y;
   }
-  if (position === 90) {
+  if (position === "bottom") {
     px = item.bottom.x;
     py = item.bottom.y + offset;
   }
-  if (position === 180) {
+  if (position === "left") {
     px -= offset;
     py = item.left.y;
   }
-  if (position === 270) {
+  if (position === "top") {
     px = item.top.x;
     py -= offset;
   }
