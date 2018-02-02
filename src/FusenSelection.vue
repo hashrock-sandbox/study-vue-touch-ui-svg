@@ -1,7 +1,7 @@
 <template>
   <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
-    <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.x - handle.size / 2" :y="handle.y - handle.size / 2" :width="handle.size" :height="handle.size"></rect>
+    <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.pos.x - size / 2" :y="handle.pos.y - size / 2" :width="size" :height="size"></rect>
     <polygon class="arrow-handle" @pointerdown="createArrow($event, 270)" :transform="arrowUiShape(270)" points="0,-8 8,0 0,8"></polygon>
     <polygon class="arrow-handle" @pointerdown="createArrow($event, 180)" :transform="arrowUiShape(180)" points="0,-8 8,0 0,8"></polygon>
     <polygon class="arrow-handle" @pointerdown="createArrow($event, 0)" :transform="arrowUiShape(0)" points="0,-8 8,0 0,8"></polygon>
@@ -11,33 +11,37 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { FusenItem } from "./shapes";
+import { FusenItem, Point } from "./shapes";
+
+interface Handle {
+  type: string[];
+  pos: Point;
+}
 
 export default Vue.extend({
   props: {
     selectedItem: Object
   },
+  data() {
+    return {
+      size: 10
+    };
+  },
   computed: {
-    handles() {
+    handles(): Handle[] {
       const item: FusenItem = this.selectedItem;
       if (!item) {
         return [];
       }
-      const size = 10;
-      /*
-        lt ct rt
-        lc    rc
-        lb cb rb
-      */
       return [
-        { type: ["left", "top"], x: 0, y: 0, size: size },
-        { type: ["center", "top"], x: item.w / 2, y: 0, size: size },
-        { type: ["right", "top"], x: item.w, y: 0, size: size },
-        { type: ["left", "center"], x: 0, y: item.h / 2, size: size },
-        { type: ["right", "center"], x: item.w, y: item.h / 2, size: size },
-        { type: ["left", "bottom"], x: 0, y: item.h, size: size },
-        { type: ["center", "bottom"], x: item.w / 2, y: item.h, size: size },
-        { type: ["right", "bottom"], x: item.w, y: item.h, size: size }
+        { type: ["right", "center"], pos: item.localRight },
+        { type: ["right", "bottom"], pos: item.localRightBottom },
+        { type: ["center", "bottom"], pos: item.localBottom },
+        { type: ["left", "bottom"], pos: item.localLeftBottom },
+        { type: ["left", "center"], pos: item.localLeft },
+        { type: ["left", "top"], pos: item.localLeftTop },
+        { type: ["center", "top"], pos: item.localTop },
+        { type: ["right", "top"], pos: item.localRightTop }
       ];
     }
   },

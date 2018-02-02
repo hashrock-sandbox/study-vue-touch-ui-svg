@@ -64,6 +64,26 @@ export default Vue.extend({
         });
       }
     }
+  },
+  mounted() {
+    const item = new FusenItem();
+    item.x = 10;
+    item.y = 10;
+    item.w = 200;
+    item.h = 100;
+    item.text = "Hello\nWorld";
+    item.id = 0;
+
+    const item2 = new FusenItem();
+    item2.x = 210;
+    item2.y = 210;
+    item2.w = 300;
+    item2.h = 150;
+    item2.text = "はろー";
+    item2.id = 1;
+
+    this.$store.commit("addFusenItem", item);
+    this.$store.commit("addFusenItem", item2);
   }
 });
 </script>

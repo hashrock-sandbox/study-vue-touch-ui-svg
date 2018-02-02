@@ -14,32 +14,7 @@ export default new Vuex.Store({
       x: 0,
       y: 0
     },
-    items: [
-      {
-        x: 10,
-        y: 10,
-        w: 200,
-        h: 100,
-        text: "Hello\nWorld",
-        id: 0
-      },
-      {
-        x: 210,
-        y: 210,
-        w: 300,
-        h: 150,
-        text: "はろー",
-        id: 1
-      },
-      {
-        x: 310,
-        y: 310,
-        w: 200,
-        h: 200,
-        text: "TestTest",
-        id: 2
-      }
-    ] as FusenItem[],
+    items: [] as FusenItem[],
     connectors: [] as Connector[],
     editing: false
   },
@@ -94,6 +69,9 @@ export default new Vuex.Store({
         return item.id === payload.id;
       })[0];
       selectedConnector.arrowType = ["none", payload.type];
+    },
+    addFusenItem(state, payload: FusenItem) {
+      state.items.push(payload);
     }
   }
 });
