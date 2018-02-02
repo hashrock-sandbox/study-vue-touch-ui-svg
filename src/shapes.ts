@@ -3,11 +3,7 @@ export interface Point {
   y: number;
 }
 
-export interface FusenItem {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
+export interface FusenItem extends Rect {
   text: string;
   id: number;
   fromPosition: number;
@@ -23,6 +19,36 @@ export interface Connector {
   toPoint: number[];
   //変更する？
   arrowType: string[];
+}
+
+export interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export function getBoundPoint(item: Rect) {
+  return function(degree: number): Point {
+    const calc = [
+      { degree: 0, o: { x: item.w, y: item.h / 2 } },
+      { degree: 45, o: { x: item.w, y: item.h } },
+      { degree: 90, o: { x: item.w / 2, y: item.h } },
+      { degree: 135, o: { x: 0, y: item.h } },
+      { degree: 180, o: { x: 0, y: item.h / 2 } },
+      { degree: 225, o: { x: item.w, y: 0 } },
+      { degree: 270, o: { x: item.w / 2, y: 0 } },
+      { degree: 315, o: { x: 0, y: 0 } }
+    ];
+
+    for (const c of calc) {
+      if (c.degree === degree) {
+        return c.o;
+      }
+    }
+
+    return { x: 0, y: 0 };
+  };
 }
 
 export function getConnectPosition(
