@@ -2,10 +2,7 @@
   <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
     <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.pos.x - size / 2" :y="handle.pos.y - size / 2" :width="size" :height="size"></rect>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'top')" :transform="arrowUiShape('top')" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'left')" :transform="arrowUiShape('left')" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'right')" :transform="arrowUiShape('right')" points="0,-8 8,0 0,8"></polygon>
-    <polygon class="arrow-handle" @pointerdown="createArrow($event, 'bottom')" :transform="arrowUiShape('bottom')" points="0,-8 8,0 0,8"></polygon>
+    <polygon v-for="handle in arrowHandles" :key="handle" class="arrow-handle" @pointerdown="createArrow($event, handle)" :transform="arrowUiShape(handle)" points="0,-8 8,0 0,8"></polygon>
   </g>
 </template>
 
@@ -24,7 +21,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      size: 10
+      size: 10,
+      arrowHandles: ["top", "left", "right", "bottom"]
     };
   },
   computed: {
