@@ -28,6 +28,9 @@ import FusenCanvas from "./FusenCanvas.vue";
 import { FusenItem, Connector, Point } from "./shapes";
 
 export default Vue.extend({
+  props: {
+    input: String
+  },
   data() {
     return {
       selectedIndex: -1,
@@ -98,6 +101,7 @@ export default Vue.extend({
     },
     addFusenItem(payload: FusenItem) {
       this.items.push(payload);
+      this.$emit("change", this.items);
     }
   },
   components: {
@@ -116,24 +120,52 @@ export default Vue.extend({
     }
   },
   mounted() {
-    const item = new FusenItem();
-    item.x = 10;
-    item.y = 10;
-    item.w = 200;
-    item.h = 100;
-    item.text = "Hello\nWorld";
-    item.id = 0;
+    // const item = new FusenItem();
+    // item.x = 10;
+    // item.y = 10;
+    // item.w = 200;
+    // item.h = 100;
+    // item.text = "Hello\nWorld";
+    // item.id = 0;
 
-    const item2 = new FusenItem();
-    item2.x = 210;
-    item2.y = 210;
-    item2.w = 300;
-    item2.h = 150;
-    item2.text = "はろー";
-    item2.id = 1;
+    // const item2 = new FusenItem();
+    // item2.x = 210;
+    // item2.y = 210;
+    // item2.w = 300;
+    // item2.h = 150;
+    // item2.text = "はろー";
+    // item2.id = 1;
 
-    this.addFusenItem(item);
-    this.addFusenItem(item2);
+    // this.addFusenItem(item);
+    // this.addFusenItem(item2);
+    this.$watch(
+      "input",
+      value => {
+        this.items = value.split("\n").map((line: string, i: number) => {
+          const tokens = line.split(" ");
+          const nums = tokens[1].split(",");
+
+          let item = new FusenItem();
+          item.text = tokens[0].replace(/\\n/g, "\n");
+          item.x = parseInt(nums[0], 10);
+          item.y = parseInt(nums[1], 10);
+          item.w = parseInt(nums[2], 10);
+          item.h = parseInt(nums[3], 10);
+          item.id = i;
+
+          return item;
+        });
+      },
+      { immediate: true }
+    );
+
+    this.$watch(
+      "items",
+      () => {
+        this.$emit("change", this.items);
+      },
+      { deep: true }
+    );
   }
 });
 </script>

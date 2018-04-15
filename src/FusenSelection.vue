@@ -1,5 +1,5 @@
 <template>
-  <g v-if="selectedItem" :transform="'translate('+ selectedItem.x + ',' + selectedItem.y +  ')'">
+  <g v-if="selectedItem" :transform="selectedTransform">
     <rect class="selection" :x="0" :y="0" :width="selectedItem.w" :height="selectedItem.h"></rect>
     <rect class="handle" @pointerdown="resizePoint(handle.type)" v-for="(handle, index) in handles" :key="index" :x="handle.pos.x - size / 2" :y="handle.pos.y - size / 2" :width="size" :height="size"></rect>
     <polygon v-for="handle in arrowHandles" :key="handle" class="arrow-handle" @pointerdown="createArrow($event, handle)" :transform="arrowUiShape(handle)" points="0,-8 8,0 0,8"></polygon>
@@ -41,6 +41,14 @@ export default Vue.extend({
         { type: ["center", "top"], pos: item.localTop },
         { type: ["right", "top"], pos: item.localRightTop }
       ];
+    },
+    selectedTransform(): string {
+      if (!this.selectedItem) {
+        return "";
+      }
+      return (
+        "translate(" + this.selectedItem.x + "," + this.selectedItem.y + ")"
+      );
     }
   },
   methods: {
