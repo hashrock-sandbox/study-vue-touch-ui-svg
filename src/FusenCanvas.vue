@@ -43,7 +43,6 @@ import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
 import ConnectorPath from "./ConnectorPath.vue";
 import { FusenItem, Connector, Point, Position } from "./shapes";
-import { mapMutations } from "vuex";
 
 export default Vue.extend({
   props: {
@@ -195,7 +194,6 @@ export default Vue.extend({
     stopDrag() {
       if (this.dragging !== "none") {
         this.dragging = "none";
-        //this.$store.commit("selectItem", -1);
       }
       if (this.arrowPreview) {
         this.arrowPreview = null;
