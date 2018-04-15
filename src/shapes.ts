@@ -87,10 +87,10 @@ export class Rect {
 }
 
 export class FusenItem extends Rect {
-  text: string;
-  id: number;
-  fromPosition: Position;
-  toPosition: Position;
+  text: string = "";
+  id: number = 0;
+  fromPosition: Position = "right";
+  toPosition: Position = "right";
 }
 
 export interface Connector {

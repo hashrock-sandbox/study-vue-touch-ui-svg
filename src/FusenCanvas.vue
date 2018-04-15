@@ -2,7 +2,7 @@
   <svg id="canv" width="800" height="800" @pointermove="onDrag" @pointerup="stopDrag">
     <g>
       <g v-for="connector in connectors" :key="connector.id" >
-        <connector-path :items="items" :connector="connector"></connector-path>
+        <connector-path :items="items" :connector="connector" @updateArrowMenu="updateArrowMenu"></connector-path>
       </g>
     </g>
     <fusen-group v-for="(item, index) in items" :index="index" :key="item.id" :item="item" @selected="startDrag" @open="openEditor"></fusen-group>
@@ -19,7 +19,7 @@
       </g>
     </g>
 
-    <g :transform="arrowMenuPosition" v-if="showArrowMenu" @pointerleave="onLeaveArrowMenu">
+    <g :transform="arrowMenuPositionTransform" v-if="showArrowMenu" @pointerleave="onLeaveArrowMenu">
       <rect x="-60" y="-60" width="120" height="90" fill="rgba(0,0,0,0)"></rect>
       <circle @click="selectArrowItem('remove')" class="arrow-menu-item" r=20 :cx="-40" :cy="-40"></circle>
       <circle @click="selectArrowItem('none')" class="arrow-menu-item" r=20 :cx="0" :cy="-40"></circle>
@@ -43,9 +43,16 @@ import FusenGroup from "./FusenGroup.vue";
 import FusenSelection from "./FusenSelection.vue";
 import ConnectorPath from "./ConnectorPath.vue";
 import { FusenItem, Connector, Point, Position } from "./shapes";
-import { mapMutations } from "vuex";
 
 export default Vue.extend({
+  props: {
+    items: Array,
+    selectedIndex: Number,
+    connectors: Array,
+    selectedConnectorId: Number,
+    showArrowMenu: Boolean,
+    arrowMenuPosition: Object
+  },
   data() {
     return {
       dragging: "none",
@@ -58,50 +65,37 @@ export default Vue.extend({
     };
   },
   computed: {
-    selectedIndex(): number {
-      return this.$store.state.selectedIndex;
-    },
     selectedItem(): FusenItem {
-      return this.$store.state.items[this.$store.state.selectedIndex];
+      return this.items[this.selectedIndex];
     },
-    items(): FusenItem[] {
-      return this.$store.state.items;
-    },
-    connectors(): Connector[] {
-      return this.$store.state.connectors;
-    },
-    selectedConnectorId(): Connector[] {
-      return this.$store.state.selectedConnectorId;
-    },
-    showArrowMenu(): boolean {
-      return this.$store.state.showArrowMenu;
-    },
-    arrowMenuPosition() {
-      const end: Point = this.$store.state.arrowMenuPosition;
+    arrowMenuPositionTransform() {
+      const end: Point = this.arrowMenuPosition;
       return `translate(${end.x},${end.y})`;
+    },
+    selectedConnector(): Connector {
+      return this.connectors.filter(item => {
+        return item.id === this.selectedConnectorId;
+      })[0];
     }
   },
   methods: {
     selectArrowItem(type: string) {
       if (type === "remove") {
-        this.$store.commit("removeConnector", this.selectedConnectorId);
+        this.$emit("removeConnector", this.selectedConnectorId);
       }
       if (type === "arrow") {
-        this.$store.commit("changeConnectorType", {
-          id: this.selectedConnectorId,
-          type: "arrow"
-        });
+        this.selectedConnector.arrowType = ["none", "arrow"];
       }
       if (type === "none") {
-        this.$store.commit("changeConnectorType", {
-          id: this.selectedConnectorId,
-          type: "none"
-        });
+        this.selectedConnector.arrowType = ["none", "none"];
       }
       this.onLeaveArrowMenu();
     },
+    updateArrowMenu(payload: any) {
+      this.$emit("updateArrowMenu", payload);
+    },
     onLeaveArrowMenu() {
-      this.$store.commit("showArrowTypeMenu", {
+      this.$emit("updateArrowMenu", {
         showArrowMenu: false,
         arrowMenuPosition: {
           x: 0,
@@ -113,7 +107,7 @@ export default Vue.extend({
       if (this.arrowPreview) {
         this.arrowPreview.to = id;
         this.arrowPreview.toPosition = type;
-        this.$store.commit("createArrow", this.arrowPreview);
+        this.$emit("createArrow", this.arrowPreview);
       }
     },
     removeArrow(ev: PointerEvent) {
@@ -149,11 +143,13 @@ export default Vue.extend({
       const e: DragEvent = ev[0];
       const index: number = ev[1];
       this.dragging = "move";
-      this.$store.commit("selectItem", index);
+      this.$emit("selectItem", index);
 
-      //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
-      this.dragOffset.x = e.offsetX - this.selectedItem.x;
-      this.dragOffset.y = e.offsetY - this.selectedItem.y;
+      this.$nextTick(() => {
+        //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
+        this.dragOffset.x = e.offsetX - this.selectedItem.x;
+        this.dragOffset.y = e.offsetY - this.selectedItem.y;
+      });
     },
     onResize(e: DragEvent) {
       let move = {
@@ -176,15 +172,16 @@ export default Vue.extend({
         move.y = gridRound(e.offsetY);
         move.h = move.h - move.y + this.selectedItem.y;
       }
-      this.$store.commit("resizeItem", move);
+      this.selectedItem.x = move.x;
+      this.selectedItem.y = move.y;
+      this.selectedItem.w = move.w;
+      this.selectedItem.h = move.h;
     },
     onDrag(e: DragEvent) {
       if (this.dragging === "move") {
         //差分値を基点に反映
-        this.$store.commit("moveItem", {
-          x: gridRound(e.offsetX - this.dragOffset.x),
-          y: gridRound(e.offsetY - this.dragOffset.y)
-        });
+        this.selectedItem.x = gridRound(e.offsetX - this.dragOffset.x);
+        this.selectedItem.y = gridRound(e.offsetY - this.dragOffset.y);
       }
       if (this.dragging === "resize") {
         this.onResize(e);
@@ -197,14 +194,13 @@ export default Vue.extend({
     stopDrag() {
       if (this.dragging !== "none") {
         this.dragging = "none";
-        //this.$store.commit("selectItem", -1);
       }
       if (this.arrowPreview) {
         this.arrowPreview = null;
       }
     },
     openEditor(index: number) {
-      this.$store.commit("openEditor", index);
+      this.$emit("openEditor", index);
     }
   },
   components: {
