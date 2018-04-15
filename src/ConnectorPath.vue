@@ -143,7 +143,7 @@ export default Vue.extend({
   methods: {
     onEnterConnectorEnd() {
       const end: Point = this.positionEnd;
-      this.$store.commit("showArrowTypeMenu", {
+      this.$emit("updateArrowMenu", {
         showArrowMenu: true,
         arrowMenuPosition: {
           x: end.x,

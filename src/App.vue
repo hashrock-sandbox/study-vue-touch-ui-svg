@@ -2,7 +2,18 @@
   <div id="app">
     <link rel="stylesheet" href="./bootstrap-reboot.css">
     <!-- mousemove, touchmove, mouseleaveはコンテナに置かないと不便 -->
-    <fusen-canvas></fusen-canvas>
+    <fusen-canvas
+      :items="items"
+      :selectedIndex="selectedIndex" 
+      :selectedConnectorId="selectedConnectorId"
+      :connectors="connectors"
+      :showArrowMenu="showArrowMenu"
+      :arrowMenuPosition="arrowMenuPosition"
+      @selectItem="selectItem"
+      @openEditor="openEditor"
+      @createArrow="createArrow"
+      @updateArrowMenu="updateArrowMenu"
+      @removeConnector="removeConnector"></fusen-canvas>
     <div class="editor" v-if="editing">
       <div class="editor__frame" :style="styleObj">
         <textarea class="editor__textarea" v-model="editingText" @blur="editItem" autofocus></textarea>
@@ -14,15 +25,27 @@
 <script lang="ts">
 import Vue from "vue";
 import FusenCanvas from "./FusenCanvas.vue";
-import { FusenItem } from "./shapes";
+import { FusenItem, Connector, Point } from "./shapes";
 
 export default Vue.extend({
+  data() {
+    return {
+      selectedIndex: -1,
+      editingText: "",
+      showArrowMenu: false,
+      selectedConnectorId: -1,
+      arrowMenuPosition: {
+        x: 0,
+        y: 0
+      },
+      items: [] as FusenItem[],
+      connectors: [] as Connector[],
+      editing: false
+    };
+  },
   computed: {
-    editing(): boolean {
-      return this.$store.state.editing;
-    },
     selectedItem(): FusenItem {
-      return this.$store.state.items[this.$store.state.selectedIndex];
+      return this.items[this.selectedIndex];
     },
     styleObj() {
       const selected: FusenItem = this.selectedItem;
@@ -35,19 +58,46 @@ export default Vue.extend({
         };
       }
       return {};
-    },
-    editingText: {
-      get(): string {
-        return this.$store.state.editingText;
-      },
-      set(value: string) {
-        this.$store.commit("updateEditor", value);
-      }
     }
   },
   methods: {
     editItem() {
-      this.$store.commit("editItem", this.editingText);
+      this.selectedItem.text = this.editingText;
+      this.editingText = "";
+      this.editing = false;
+    },
+    moveItem() {},
+    resizeItem() {},
+    selectItem(index: number) {
+      this.selectedIndex = index;
+    },
+    openEditor(index: number) {
+      this.editing = true;
+      this.selectedIndex = index;
+      this.editingText = this.selectedItem.text;
+    },
+    updateEditor() {},
+    createArrow(payload: Connector) {
+      // idは全connector.idのmax + 1
+      payload.id =
+        this.connectors
+          .map(item => item.id)
+          .reduce((x, y) => (x > y ? x : y), 0) + 1;
+      this.connectors.push(payload);
+    },
+    updateArrowMenu(payload: any) {
+      this.showArrowMenu = payload.showArrowMenu;
+      this.arrowMenuPosition = payload.arrowMenuPosition;
+      this.selectedConnectorId = payload.selectedConnectorId;
+    },
+    showArrowTypeMenu() {},
+    removeConnector(id: number) {
+      this.connectors = this.connectors.filter(item => {
+        return item.id !== id;
+      });
+    },
+    addFusenItem(payload: FusenItem) {
+      this.items.push(payload);
     }
   },
   components: {
@@ -82,8 +132,8 @@ export default Vue.extend({
     item2.text = "はろー";
     item2.id = 1;
 
-    this.$store.commit("addFusenItem", item);
-    this.$store.commit("addFusenItem", item2);
+    this.addFusenItem(item);
+    this.addFusenItem(item2);
   }
 });
 </script>
